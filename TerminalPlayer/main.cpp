@@ -16,6 +16,7 @@ static struct DummyViewer {
 static uint8_t texture[1024][1024];
 static int tex_width = 0, tex_height = 0;
 static std::mutex texture_mutex;
+static int screen_width = 100;
 
 void image_to_ascii(uint32_t* buffer, uint32_t p_width, uint32_t p_height, int new_width = 80)
 {
@@ -55,7 +56,7 @@ static void notify(int event, void* param)
     if (event == MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER) {
         auto* renderer_frame = (MesenSoftwareRendererFrame*)param;
         auto frame = renderer_frame->frame;
-        image_to_ascii(frame.buffer, frame.width, frame.height, 100);
+        image_to_ascii(frame.buffer, frame.width, frame.height, screen_width);
     }
 }
 
@@ -126,6 +127,9 @@ int main(int argc, char* argv[])
     // mesen_set_output_to_stdout(true);
     mesen_register_notification_callback(notify);
     bool succ = mesen_load_ROM(argv[1], NULL);
+
+    if (argc >= 3)
+        screen_width = atoi(argv[2]);
 
     if (succ) {
         int ch;
