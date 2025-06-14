@@ -83,8 +83,8 @@ install(TARGETS MesenRT DESTINATION lib)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/ExportAPI/include/Mesen DESTINATION include)
 install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/ExportAPI/include/Mesen DESTINATION include)
 
-# test
+# TerminalPlayer
 find_package(OpenCV REQUIRED)
-add_executable(test ExportAPI/src/test.cpp)
-target_include_directories(test PRIVATE ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(test PRIVATE MesenRT ${OpenCV_LIBS} ncurses)
+add_executable(TerminalPlayer TerminalPlayer/main.cpp)
+target_include_directories(TerminalPlayer PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(TerminalPlayer PRIVATE MesenRT ${OpenCV_LIBS} ncurses)
