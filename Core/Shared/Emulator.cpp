@@ -286,7 +286,7 @@ void Emulator::Stop(bool sendNotification, bool preventRecentGameSave, bool save
 
 	if(_emuThread) {
 		_emuThread->join();
-		_emuThread.release();
+		_emuThread.reset();
 	}
 
 	if(_console && saveBattery) {
