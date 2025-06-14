@@ -119,6 +119,11 @@ void Emulator::Run()
 		}
 	}
 
+	if (_stopFlag) {
+		_runLock.Release();
+		return;
+	}
+
 	_stopFlag = false;
 	_isRunAheadFrame = false;
 
