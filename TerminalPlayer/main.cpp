@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <thread>
 #include <unistd.h>
+#define USE_NCURSES 1
 
 static struct DummyWindow {
 } window_;
@@ -60,7 +61,7 @@ static void notify(int event, void* param)
     if (event == MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER) {
         auto* renderer_frame = (MesenSoftwareRendererFrame*)param;
         auto frame = renderer_frame->frame;
-        auto sz = image_to_ascii(frame.buffer, frame.width, frame.height, 65);
+        auto sz = image_to_ascii(frame.buffer, frame.width, frame.height, 70);
         {
             std::lock_guard lk(texture_mutex);
             texture = std::move(sz);
@@ -82,17 +83,37 @@ int main(int argc, char* argv[])
 {
     if (argc <= 1)
         return 0;
+#if USE_NCURSES
     initscr();
     curs_set(0);
     nodelay(stdscr, TRUE);
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
+#endif
 
     mesen_init();
     mesen_initialize_emu("./", &window_, &viewer_, true, true, false, false);
 
-    mesen_set_default_config();
+    MesenNesConfig NES_config = {
+        .user_palette = { 0xFF666666, 0xFF002A88, 0xFF1412A7, 0xFF3B00A4, 0xFF5C007E, 0xFF6E0040, 0xFF6C0600, 0xFF561D00, 0xFF333500, 0xFF0B4800, 0xFF005200, 0xFF004F08, 0xFF00404D, 0xFF000000, 0xFF000000, 0xFF000000, 0xFFADADAD, 0xFF155FD9, 0xFF4240FF, 0xFF7527FE, 0xFFA01ACC, 0xFFB71E7B, 0xFFB53120, 0xFF994E00, 0xFF6B6D00, 0xFF388700, 0xFF0C9300, 0xFF008F32, 0xFF007C8D, 0xFF000000, 0xFF000000, 0xFF000000, 0xFFFFFEFF, 0xFF64B0FF, 0xFF9290FF, 0xFFC676FF, 0xFFF36AFF, 0xFFFE6ECC, 0xFFFE8170, 0xFFEA9E22, 0xFFBCBE00, 0xFF88D800, 0xFF5CE430, 0xFF45E082, 0xFF48CDDE, 0xFF4F4F4F, 0xFF000000, 0xFF000000, 0xFFFFFEFF, 0xFFC0DFFF, 0xFFD3D2FF, 0xFFE8C8FF, 0xFFFBC2FF, 0xFFFEC4EA, 0xFFFECCC5, 0xFFF7D8A5, 0xFFE4E594, 0xFFCFEF96, 0xFFBDF4AB, 0xFFB3F3CC, 0xFFB5EBF2, 0xFFB8B8B8, 0xFF000000, 0xFF000000 },
+        .port_1 = {
+            .key_mapping = {
+                .A = 'J',
+                .B = 'K',
+
+                .up = 'W',
+                .down = 'S',
+                .left = 'A',
+                .right = 'D',
+
+                .start = 'M',
+                .select = 'N',
+            },
+            .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
+        },
+    };
+    mesen_set_NES_config(&NES_config);
     // mesen_set_output_to_stdout(true);
     mesen_register_notification_callback(notify);
     bool succ = mesen_load_ROM(argv[1], NULL);
@@ -102,17 +123,38 @@ int main(int argc, char* argv[])
         bool running = true;
 
         while (running) {
+            mesen_reset_key_state();
             // 1. 处理输入
             while ((ch = getch()) != ERR) {
                 if (ch == 'q')
                     running = false;
-                // 其他输入处理...
+                else if (ch == 'm') {
+                    mesen_set_key_state('M', true);
+                } else if (ch == 'n') {
+                    mesen_set_key_state('N', true);
+                } else if (ch == 'w') {
+                    mesen_set_key_state('W', true);
+                } else if (ch == 's') {
+                    mesen_set_key_state('S', true);
+                } else if (ch == 'a') {
+                    mesen_set_key_state('A', true);
+                } else if (ch == 'd') {
+                    mesen_set_key_state('D', true);
+                }
+                else if (ch == 'j') {
+                    mesen_set_key_state('J', true);
+                }
+                else if (ch == 'k') {
+                    mesen_set_key_state('K', true);
+                }
             }
 
             // 3. 渲染
+#if USE_NCURSES
             clear();
             render_game();
             refresh();
+#endif
 
             // 4. 控制帧率
             usleep(16666); // ≈60 FPS (1000000/60)
@@ -121,6 +163,8 @@ int main(int argc, char* argv[])
 
     mesen_release();
 
+#if USE_NCURSES
     endwin();
+#endif
     return 0;
 }
