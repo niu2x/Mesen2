@@ -30,7 +30,34 @@ MESEN_API void mesen_take_screenshot();
 
 MESEN_API double mesen_get_aspect_ratio();
 
-MESEN_API void mesen_set_default_config();
+enum MesenControllerType {
+    MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 6,
+};
+
+typedef struct {
+    uint16_t A;
+    uint16_t B;
+    uint16_t up;
+    uint16_t down;
+    uint16_t left;
+    uint16_t right;
+    uint16_t start;
+    uint16_t select;
+} MesenKeyMapping;
+
+typedef struct
+{
+    MesenKeyMapping key_mapping;
+    int type;
+} MesenControllerConfig;
+
+typedef struct {
+    uint32_t user_palette[512];
+    MesenControllerConfig port_1;
+    MesenControllerConfig port_2;
+} MesenNesConfig;
+
+MESEN_API void mesen_set_NES_config(const MesenNesConfig* NES_config);
 MESEN_API void mesen_set_output_to_stdout(bool enable);
 
 typedef void (*NotificationCallback)(int event_type, void* param);
@@ -80,6 +107,9 @@ typedef struct {
 MESEN_API void* mesen_register_notification_callback(NotificationCallback);
 MESEN_API void mesen_unregister_notification_callback(void* handle);
 MESEN_API const char* mesen_get_notification_type_name(int noti_type);
+
+MESEN_API void mesen_set_key_state(uint16_t scan_code, bool state);
+MESEN_API void mesen_reset_key_state();
 
 #ifdef __cplusplus
 }
