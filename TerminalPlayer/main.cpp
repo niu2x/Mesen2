@@ -1,9 +1,9 @@
-#include <opencv2/opencv.hpp>
 #include <Mesen/Mesen.h>
 #include <ncurses.h>
+#include <opencv2/opencv.hpp>
 #include <stdio.h>
-#include <unistd.h>
 #include <thread>
+#include <unistd.h>
 
 static struct DummyWindow {
 } window_;
@@ -69,7 +69,8 @@ static void notify(int event, void* param)
     }
 }
 
-static void render_game() {
+static void render_game()
+{
     {
         std::lock_guard lk(texture_mutex);
         printw(texture.c_str());
@@ -82,10 +83,10 @@ int main(int argc, char* argv[])
         return 0;
     initscr();
     curs_set(0);
-    nodelay(stdscr, TRUE); 
+    nodelay(stdscr, TRUE);
     cbreak();
     noecho();
-    keypad(stdscr, TRUE); 
+    keypad(stdscr, TRUE);
 
     mesen_init();
     mesen_initialize_emu("./", &window_, &viewer_, true, true, false, true);
@@ -109,27 +110,27 @@ int main(int argc, char* argv[])
 
         // sleep(100);
         // mesen_take_screenshot();
-        // 
-        
+        //
+
         int ch;
         bool running = true;
-        
-        while(running) {
+
+        while (running) {
             // 1. 处理输入
-            while((ch = getch()) != ERR) {
-                if(ch == 'q') running = false;
+            while ((ch = getch()) != ERR) {
+                if (ch == 'q')
+                    running = false;
                 // 其他输入处理...
             }
-            
+
             // 3. 渲染
             clear();
             render_game();
             refresh();
-            
+
             // 4. 控制帧率
             usleep(16666); // ≈60 FPS (1000000/60)
         }
-
     }
 
     mesen_release();
