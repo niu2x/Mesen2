@@ -1,6 +1,7 @@
+#include <opencv2/opencv.hpp>
+
 #include <Mesen/Mesen.h>
 #include <ncurses.h>
-#include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <thread>
 #include <unistd.h>
@@ -89,7 +90,7 @@ int main(int argc, char* argv[])
     keypad(stdscr, TRUE);
 
     mesen_init();
-    mesen_initialize_emu("./", &window_, &viewer_, true, true, false, true);
+    mesen_initialize_emu("./", &window_, &viewer_, true, true, false, false);
 
     mesen_set_default_config();
     // mesen_set_output_to_stdout(true);
@@ -97,21 +98,6 @@ int main(int argc, char* argv[])
     bool succ = mesen_load_ROM(argv[1], NULL);
 
     if (succ) {
-        // mesen_dump_ROM_info();
-
-        // bool is_running = mesen_is_running();
-        // printf("is_running?: %d\n", is_running);
-
-        // bool is_paused = mesen_is_paused();
-        // printf("is_paused?: %d\n", is_paused);
-
-        // double aspect_ratio = mesen_get_aspect_ratio();
-        // printf("aspect_ratio?: %lf\n", aspect_ratio);
-
-        // sleep(100);
-        // mesen_take_screenshot();
-        //
-
         int ch;
         bool running = true;
 
@@ -137,12 +123,4 @@ int main(int argc, char* argv[])
 
     endwin();
     return 0;
-
-    // std::cout << "Main Thread: " << std::this_thread::get_id() << std::endl;
-    // printf("load_ROM: %s\n", argv[1]);
-    // printf("load_ROM succ?: %d\n", succ);
-
-    // printf("release\n");
-    // printf("release done\n");
-    // return 0;
 }
