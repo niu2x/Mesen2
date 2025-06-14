@@ -13,11 +13,13 @@ static struct DummyWindow {
 static struct DummyViewer {
 } viewer_;
 
-static std::string texture;
+static uint8_t texture[1024][1024];
+static int tex_width = 0, tex_height = 0;
 static std::mutex texture_mutex;
 
-std::string image_to_ascii(uint32_t* buffer, uint32_t p_width, uint32_t p_height, int new_width = 80)
+void image_to_ascii(uint32_t* buffer, uint32_t p_width, uint32_t p_height, int new_width = 80)
 {
+
     // 1. 读取图像并转为灰度图
     cv::Mat img((int)p_height, (int)p_width, CV_8UC4, buffer);
     // 2. 计算新尺寸（保持宽高比，高度减半）
@@ -34,49 +36,49 @@ std::string image_to_ascii(uint32_t* buffer, uint32_t p_width, uint32_t p_height
     cv::Mat gray_image;
     cv::cvtColor(resized_img, gray_image, cv::COLOR_BGR2GRAY); // BGR转灰度
 
-    // 4. 定义字符集（按视觉密度排序）
-    const std::string ascii_chars = " ,-:!76CO$QHNM";
-
-    // 5. 生成ASCII字符画
-    std::string ascii_str;
-    for (int y = 0; y < gray_image.rows; y++) {
-        for (int x = 0; x < gray_image.cols; x++) {
-            // 获取像素灰度值 (0-255)
-            uchar pixel = gray_image.at<uchar>(y, x);
-
-            int char_index = static_cast<int>(pixel / 255.0 * (ascii_chars.length() - 1));
-            ascii_str += ascii_chars[char_index];
-
-            // printf("%d %d %d\n", x, y, pixel);
+    {
+        std::lock_guard lk(texture_mutex);
+        tex_width = gray_image.cols;
+        tex_height = gray_image.rows;
+        for (int y = 0; y < gray_image.rows; y++) {
+            for (int x = 0; x < gray_image.cols; x++) {
+                // 获取像素灰度值 (0-255)
+                uchar pixel = gray_image.at<uchar>(y, x);
+                texture[y][x] = pixel;
+            }
         }
-        ascii_str += '\n'; // 行尾换行
     }
-    return ascii_str;
 }
 
 static void notify(int event, void* param)
 {
-    // std::cout << "Notify " << mesen_get_notification_type_name(event) <<  " Thread: " << std::this_thread::get_id() << std::endl;
-    // printf("notify %s\n", mesen_get_notification_type_name(event));
     if (event == MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER) {
         auto* renderer_frame = (MesenSoftwareRendererFrame*)param;
         auto frame = renderer_frame->frame;
-        auto sz = image_to_ascii(frame.buffer, frame.width, frame.height, 70);
-        {
-            std::lock_guard lk(texture_mutex);
-            texture = std::move(sz);
-        }
-        // std::cout << "\033[2J\033[1;1H";
-        // printf("%s", sz.c_str());
+        image_to_ascii(frame.buffer, frame.width, frame.height, 100);
     }
 }
 
 static void render_game()
 {
+#if USE_NCURSES
+
+    for (int y = 0; y < tex_height; y++) {
+        move(y, 0);
+        for (int x = 0; x < tex_width; x++) {
+            int level = texture[y][x] / 4;
+            attron(COLOR_PAIR(level));
+            printw(" ");
+            attroff(COLOR_PAIR(level));
+        }
+    }
+
+#else
     {
         std::lock_guard lk(texture_mutex);
         printw(texture.c_str());
     }
+#endif
 }
 
 int main(int argc, char* argv[])
@@ -90,6 +92,13 @@ int main(int argc, char* argv[])
     cbreak();
     noecho();
     keypad(stdscr, TRUE);
+    start_color();
+
+    for (int i = 0; i < 64; i++) {
+        init_color(i, i * 14, i * 14, i * 14);
+        init_pair(i, i, i);
+    }
+
 #endif
 
     mesen_init();
@@ -157,7 +166,7 @@ int main(int argc, char* argv[])
 #endif
 
             // 4. 控制帧率
-            usleep(16666); // ≈60 FPS (1000000/60)
+            usleep(16666 * 4); // ≈60 FPS (1000000/60)
         }
     }
 
