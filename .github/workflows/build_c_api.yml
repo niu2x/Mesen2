@@ -9,12 +9,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Setup CMake
-        uses: Symbitic/install-cmake@v0.1.0
-      - name: configure
+      - name: Configure
         run: |
           cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release
-      - name: build
+      - name: Build
         run: |
           cmake --build build -j
         
