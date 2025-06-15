@@ -9,5 +9,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Configure
+        run: |
+          cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release
+      - name: Build
+        run: |
+          cmake --build build -j
+        
