@@ -25,3 +25,6 @@ This repository provides a simplified C API wrapper for the Mesen emulator (http
 
 - Only basic emulation core functionality is exposed
 - Limited controller API implementation
+
+## Example
+[Terminal NES Emulator Demo](/TerminalPlayer/main.cpp) - Terminal NES Emulator Demo
