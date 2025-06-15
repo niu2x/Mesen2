@@ -1,6 +1,7 @@
 #include <opencv2/opencv.hpp>
 
 #include <Mesen/Mesen.h>
+#include <getopt.h>
 #include <ncurses.h>
 #include <stdio.h>
 #include <thread>
@@ -14,6 +15,7 @@ static uint8_t gray[1024][1024];
 static int tex_width = 0, tex_height = 0;
 static int screen_width = 100;
 static bool use_ascii = true;
+static bool use_edge = false;
 
 void image_to_ascii(uint32_t* buffer, uint32_t p_width, uint32_t p_height, int new_width = 80)
 {
@@ -32,6 +34,12 @@ void image_to_ascii(uint32_t* buffer, uint32_t p_width, uint32_t p_height, int n
 
     cv::Mat gray_image;
     cv::cvtColor(resized_img, gray_image, cv::COLOR_BGR2GRAY); // BGR转灰度
+
+    if (use_edge) {
+        cv::Mat edges;
+        Canny(gray_image, edges, 50, 150); // 阈值可调整
+        gray_image = edges;
+    }
 
     // 4. 定义字符集（按视觉密度排序）
     const std::string ascii_chars = " ,-:!76CO$QHNM";
@@ -92,14 +100,38 @@ static void render_game()
 
 int main(int argc, char* argv[])
 {
-    if (argc <= 1)
-        return 0;
+    int opt;
 
-    if (argc >= 3)
-        screen_width = atoi(argv[2]);
+    while ((opt = getopt(argc, argv, "a:e:w:")) != -1) {
+        switch (opt) {
+        case 'a':
+            use_ascii = strcmp(optarg, "t") == 0;
+            break;
 
-    if (argc >= 4)
-        use_ascii = atoi(argv[3]);
+        case 'e':
+            use_edge = strcmp(optarg, "t") == 0;
+            break;
+
+        case 'w':
+            screen_width = atoi(optarg);
+            break;
+        case '?':
+            // getopt already printed an error message
+            exit(1);
+            break;
+        default:
+            printf("Unexpected case in getopt\n");
+            exit(1);
+            break;
+        }
+    }
+
+    // Print remaining arguments (non-options)
+    if (optind >= argc) {
+        printf("no nes.\n");
+        exit(1);
+    }
+
 #if USE_NCURSES
     initscr();
     curs_set(0);
@@ -143,7 +175,7 @@ int main(int argc, char* argv[])
     mesen_set_NES_config(&NES_config);
     // mesen_set_output_to_stdout(true);
     mesen_register_notification_callback(notify);
-    bool succ = mesen_load_ROM(argv[1], NULL);
+    bool succ = mesen_load_ROM(argv[optind], NULL);
 
     if (succ) {
         int ch;
