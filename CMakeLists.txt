@@ -83,7 +83,7 @@ option(BUILD_TerminalPlayer "BUILD_TerminalPlayer" OFF)
 if(BUILD_TerminalPlayer)
     # TerminalPlayer
     find_package(OpenCV REQUIRED)
-    add_executable(TerminalPlayer TerminalPlayer/main.cpp)
+    add_executable(TerminalPlayer ExportAPI/examples/TerminalPlayer/main.cpp)
     target_include_directories(TerminalPlayer PRIVATE ${OpenCV_INCLUDE_DIRS})
     target_link_libraries(TerminalPlayer PRIVATE MesenRT ${OpenCV_LIBS} ncurses)
 endif()
