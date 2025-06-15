@@ -9,10 +9,22 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+
       - name: Configure
         run: |
           cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release
+
       - name: Build
         run: |
-          cmake --build build -j
-        
+          cmake --build build
+
+      - name: Install
+        run: |
+          cmake --install build --prefix dist
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: MesenRT
+          path: dist
+
