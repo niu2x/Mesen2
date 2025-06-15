@@ -19,7 +19,12 @@
 #include "Utilities/StringUtilities.h"
 #include "InteropNotificationListeners.h"
 
-#ifdef _WIN32
+#ifdef ONLY_SOFTWARE_DEVICE
+	#include "Core/Shared/Interfaces/IAudioDevice.h"
+	#include "Core/Shared/Interfaces/IMouseManager.h"
+	#include "SoftwareDevice/SoftwareKeyManager.h"
+	// #include "SoftwareDevice/SoftwareMouseManager.h"
+#elif _WIN32
 	#include "Windows/Renderer.h"
 	#include "Windows/SoundManager.h"
 	#include "Windows/WindowsKeyManager.h"
@@ -90,7 +95,9 @@ extern "C" {
 				if(softwareRenderer) {
 					_renderer.reset(new SoftwareRenderer(_emu.get()));
 				} else {
-					#ifdef _WIN32
+					#ifdef ONLY_SOFTWARE_DEVICE
+						_renderer.reset(new SoftwareRenderer(_emu.get()));
+					#elif _WIN32
 						_renderer.reset(new Renderer(_emu.get(), (HWND)_viewerHandle));
 					#elif __APPLE__
 						_renderer.reset(new SoftwareRenderer(_emu.get()));
@@ -101,7 +108,8 @@ extern "C" {
 			} 
 
 			if(!noAudio) {
-				#ifdef _WIN32
+				#ifdef ONLY_SOFTWARE_DEVICE
+				#elif _WIN32
 					_soundManager.reset(new SoundManager(_emu.get(), (HWND)_windowHandle));
 				#else
 					_soundManager.reset(new SdlSoundManager(_emu.get()));
@@ -109,7 +117,9 @@ extern "C" {
 			}
 
 			if(!noInput) {
-				#ifdef _WIN32
+				#ifdef ONLY_SOFTWARE_DEVICE
+					_keyManager.reset(new SoftwareKeyManager(_emu.get()));
+				#elif _WIN32
 					_keyManager.reset(new WindowsKeyManager(_emu.get(), (HWND)_windowHandle));
 					_mouseManager.reset(new WindowsMouseManager());
 				#elif __APPLE__
@@ -119,7 +129,6 @@ extern "C" {
 					_keyManager.reset(new LinuxKeyManager(_emu.get()));
 					_mouseManager.reset(new LinuxMouseManager(_windowHandle));
 				#endif
-					
 				KeyManager::RegisterKeyManager(_keyManager.get());
 			}
 		}

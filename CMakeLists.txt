@@ -12,9 +12,10 @@ file(GLOB_RECURSE source
     Lua/*.c 
     Utilities/*.cpp
     Utilities/*.c
-    Sdl/*.cpp
+    # Sdl/*.cpp
     SevenZip/*.c
-    Linux/*.cpp
+    # Linux/*.cpp
+    SoftwareDevice/*.cpp
 )
 
 target_sources(MesenLib PRIVATE ${source})
@@ -30,11 +31,6 @@ set_target_properties(MesenLib PROPERTIES
     CXX_VISIBILITY_PRESET hidden
     VISIBILITY_INLINES_HIDDEN ON
     POSITION_INDEPENDENT_CODE ON
-)
-
-find_package(SDL2 REQUIRED)
-target_link_libraries(MesenLib PUBLIC
-    SDL2::SDL2
 )
 
 # MesenRT
@@ -71,11 +67,9 @@ target_include_directories(MesenRT PUBLIC
 
 target_link_libraries(MesenRT PRIVATE 
     MesenLib
-    evdev
-    X11
 )
 
-target_compile_definitions(MesenRT PRIVATE USE_CMAKE)
+target_compile_definitions(MesenRT PRIVATE USE_CMAKE ONLY_SOFTWARE_DEVICE)
 
 # Install MesenRT
 
