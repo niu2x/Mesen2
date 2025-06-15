@@ -1,6 +1,4 @@
-# This workflow is currently disabled
-#
-# name: Build Mesen
+name: Build Mesen
 
 on: [push]
 
