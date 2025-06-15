@@ -10,7 +10,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       - name: Setup CMake
-        uses: milliewalky/setup-cmake@v1
+        uses: Symbitic/install-cmake@v0.1.0
       - name: configure
         run: |
           cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release
