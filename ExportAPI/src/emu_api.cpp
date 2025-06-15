@@ -11,20 +11,21 @@ const char* mesen_get_build_date() { return GetMesenBuildDate(); }
 void mesen_init() { InitDll(); }
 
 void mesen_initialize_emu(const char* home_folder,
-                          void* window_handle,
-                          void* viewer_handle,
-                          bool software_renderer,
-                          bool no_audio,
-                          bool no_video,
-                          bool no_input)
+    bool no_audio,
+    bool no_video,
+    bool no_input)
 {
+    static struct {
+    } fake_window;
+    static struct {
+    } fake_viewer;
     InitializeEmu(home_folder,
-                  window_handle,
-                  viewer_handle,
-                  software_renderer,
-                  no_audio,
-                  no_video,
-                  no_input);
+        &fake_window,
+        &fake_viewer,
+        true,
+        no_audio,
+        no_video,
+        no_input);
 }
 
 void mesen_release() { Release(); }

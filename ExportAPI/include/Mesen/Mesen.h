@@ -14,7 +14,6 @@ MESEN_API const char* mesen_get_build_date();
 MESEN_API void mesen_init();
 
 MESEN_API void mesen_initialize_emu(const char* home_folder,
-    void* window_handle, void* viewer_handle, bool software_renderer,
     bool no_audio, bool no_video, bool no_input);
 
 MESEN_API void mesen_release();
