@@ -9,5 +9,12 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - name: Setup CMake
+        uses: milliewalky/setup-cmake@v1
+      - name: configure
+        run: |
+          cmake -S . -Bbuild -DCMAKE_BUILD_TYPE=Release
+      - name: build
+        run: |
+          cmake --build build -j
+        
