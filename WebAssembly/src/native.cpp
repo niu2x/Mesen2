@@ -217,13 +217,15 @@ EM_BOOL key_callback(int eventType,
         bool pressed = eventType == EMSCRIPTEN_EVENT_KEYDOWN;
         switch (e->keyCode) {
             case 32:
-            case 13: 
-            case 'A': 
-            case 'W': 
-            case 'D': 
-            case 'S': 
-            case 'K': 
-            case 'J': {
+            case 13:
+            case 'A':
+            case 'W':
+            case 'D':
+            case 'S':
+            case 'K':
+            case 'J':
+            case 'U':
+            case 'I': {
                 handled = EM_TRUE;
                 mesen_set_key_state(e->keyCode, pressed);
             }
@@ -307,6 +309,11 @@ extern "C" void test(const char* ROM_path)
 
                 .start = 13,
                 .select = 32,
+
+                .turbo_A = 'U',
+                .turbo_B = 'I',
+
+                .turbo_speed = 2,
             },
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
         },

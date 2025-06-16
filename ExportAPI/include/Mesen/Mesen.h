@@ -30,7 +30,7 @@ MESEN_API void mesen_take_screenshot();
 MESEN_API double mesen_get_aspect_ratio();
 
 enum MesenControllerType {
-    MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 6,
+    MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 5,
 };
 
 typedef struct MesenKeyMapping {
@@ -42,6 +42,10 @@ typedef struct MesenKeyMapping {
     uint16_t right;
     uint16_t start;
     uint16_t select;
+    uint16_t turbo_A;
+    uint16_t turbo_B;
+    // range: 0-3
+    uint32_t turbo_speed;
 } MesenKeyMapping;
 
 typedef struct MesenControllerConfig

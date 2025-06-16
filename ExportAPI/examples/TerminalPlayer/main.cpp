@@ -168,6 +168,11 @@ int main(int argc, char* argv[])
 
                 .start = 'M',
                 .select = 'N',
+
+                .turbo_A = 'U',
+                .turbo_B = 'I',
+
+                .turbo_speed = 0,
             },
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
         },
@@ -205,6 +210,12 @@ int main(int argc, char* argv[])
                 }
                 else if (ch == 'k') {
                     mesen_set_key_state('K', true);
+                }
+
+                else if (ch == 'u') {
+                    mesen_set_key_state('U', true);
+                } else if (ch == 'i') {
+                    mesen_set_key_state('I', true);
                 }
             }
 

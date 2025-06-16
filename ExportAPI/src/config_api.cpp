@@ -19,7 +19,10 @@ ControllerConfig from(const MesenControllerConfig& src)
             .Right = src.key_mapping.right,
             .Start = src.key_mapping.start,
             .Select = src.key_mapping.select,
+            .TurboA = src.key_mapping.turbo_A,
+            .TurboB = src.key_mapping.turbo_B,
         },
+        .TurboSpeed = src.key_mapping.turbo_speed,
     };
     return config;
 }
