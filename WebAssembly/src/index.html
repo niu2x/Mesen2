@@ -31,6 +31,7 @@
       height: 100%;
       object-fit: contain;
     }
+
   </style>
 </head>
 <body>
@@ -39,7 +40,6 @@
   </div>
 
   <script>
-    // 哈希由 HtmlWebpackPlugin 的 output.filename 生成
     globalThis.Module = {
       locateFile: (path) => {
         if (path.endsWith('.wasm')) return "<%= htmlWebpackPlugin.manifest['WebNative.wasm'] %>";
@@ -48,8 +48,6 @@
       }
     };
   </script>
-
   <script src="<%= htmlWebpackPlugin.manifest['WebNative.js'] %>"> </script>
-
 </body>
 </html>

@@ -14,15 +14,37 @@ async function fetchFileAsByteArray(url) {
     const byteArray = new Uint8Array(arrayBuffer);
     return byteArray;
 }
-globalThis.nativeOnReady = () => {
-    // var url = new URL(window.location.href);
-    // var name = url.searchParams.get("name");
 
-    console.log("nativeOnReady 1")
+
+// 检测是否支持WebWorker
+function isWebWorkerSupported() {
+    return typeof Worker !== 'undefined';
+}
+
+function isSharedArrayBufferSupported() {
+    if (typeof SharedArrayBuffer === 'undefined') {
+        return false;
+    }
+    
+    try {
+        const sab = new SharedArrayBuffer(1);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+// 执行检测并输出结果
+function checkSupport() {
+    return isWebWorkerSupported() && isSharedArrayBufferSupported();
+}
+
+globalThis.nativeOnReady = () => {
+    if(!checkSupport())
+        return; 
 
     fetchFileAsByteArray(`/test.nes`)
     .then((data)=>{
-        console.log("nativeOnReady 2")
         globalThis.FS.writeFile("/test.nes", data)
         globalThis.Module.ccall(
           'test',  
@@ -30,11 +52,8 @@ globalThis.nativeOnReady = () => {
           ['string'],
           ["/test.nes"]   
         );
-        console.log("nativeOnReady 3")
     })
     .catch((err)=>{
-        console.log("nativeOnReady 4")
         console.error(err)
     })
-    console.log("nativeOnReady 5")
 }
