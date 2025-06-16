@@ -38,4 +38,5 @@ globalThis.nativeOnReady = () => {
     //     console.error(err)
     // })
     globalThis.Module._test();
+    console.log("succ")
 }

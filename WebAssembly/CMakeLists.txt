@@ -19,16 +19,14 @@ target_link_libraries(WebNative PRIVATE
 )
 
 target_compile_options(WebNative PRIVATE 
-    "-sSHARED_MEMORY=1"
-    "-sWASM_WORKERS=1"
+    "-sUSE_PTHREADS=1"
 )
 
 target_link_options(WebNative PRIVATE
     "-sUSE_PTHREADS=1"
+    "-sWASM_WORKERS=1"
     "-sINITIAL_MEMORY=128MB"
     "-sMAXIMUM_MEMORY=512MB"
-    "-sPTHREAD_POOL_SIZE=16"
+    "-sPTHREAD_POOL_SIZE=8"
     "-sALLOW_MEMORY_GROWTH=1"
-    "-sSHARED_MEMORY=1"
-    "-sWASM_WORKERS=1"
 )

@@ -1,0 +1,14 @@
+version: '3.3'
+
+services:
+  web:
+    image: nginx:latest
+    container_name: wasm_nginx
+    ports:
+      - "9999:80"
+      # - "443:443"  # 如果需要 HTTPS
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./dist:/usr/share/nginx/html:ro  # 替换为你的本地目录路径
+      # - ./ssl:/etc/nginx/ssl:ro  # 如果需要 HTTPS (证书存放目录)
+    restart: unless-stopped

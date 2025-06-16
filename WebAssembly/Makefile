@@ -18,4 +18,5 @@ build-WebAssembly:
 
 	cp src/play.html dist/
 	cp ../build/WebAssembly/WebNative.js dist/
+	cp ../build/WebAssembly/WebNative.worker.js dist/
 	cp ../build/WebAssembly/WebNative.wasm dist/

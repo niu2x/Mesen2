@@ -81,13 +81,10 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
     install(TARGETS MesenLib DESTINATION lib)
 
     target_compile_options(MesenLib PRIVATE 
-        "-sSHARED_MEMORY=1"
-        "-sWASM_WORKERS=1"
+        "-sUSE_PTHREADS=1"
     )
-
     target_compile_options(MesenRT PRIVATE 
-        "-sSHARED_MEMORY=1"
-        "-sWASM_WORKERS=1"
+        "-sUSE_PTHREADS=1"
     )
 endif()
 
