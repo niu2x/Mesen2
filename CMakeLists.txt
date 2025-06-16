@@ -79,8 +79,16 @@ install(DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/ExportAPI/include/Mesen DESTINATIO
 
 if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
     install(TARGETS MesenLib DESTINATION lib)
-    target_compile_options(MesenLib PRIVATE "-mbulk-memory" "-matomics")
-    target_compile_options(MesenRT PRIVATE "-mbulk-memory" "-matomics")
+
+    target_compile_options(MesenLib PRIVATE 
+        "-sSHARED_MEMORY=1"
+        "-sWASM_WORKERS=1"
+    )
+
+    target_compile_options(MesenRT PRIVATE 
+        "-sSHARED_MEMORY=1"
+        "-sWASM_WORKERS=1"
+    )
 endif()
 
 option(BUILD_TerminalPlayer "BUILD_TerminalPlayer" OFF)

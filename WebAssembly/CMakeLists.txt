@@ -18,13 +18,17 @@ target_link_libraries(WebNative PRIVATE
     MesenLib
 )
 
-target_compile_options(WebNative PRIVATE "-mbulk-memory" "-matomics")
+target_compile_options(WebNative PRIVATE 
+    "-sSHARED_MEMORY=1"
+    "-sWASM_WORKERS=1"
+)
 
 target_link_options(WebNative PRIVATE
-    "-pthread"
+    "-sUSE_PTHREADS=1"
     "-sINITIAL_MEMORY=128MB"
     "-sMAXIMUM_MEMORY=512MB"
+    "-sPTHREAD_POOL_SIZE=16"
     "-sALLOW_MEMORY_GROWTH=1"
-    # "-sATOMICS=1"
-    # "-sBULK_MEMORY=1"
+    "-sSHARED_MEMORY=1"
+    "-sWASM_WORKERS=1"
 )
