@@ -1,11 +1,15 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
 #include <vector>
+#include <mutex>
 #include <Mesen/Mesen.h>
 #include <GLES2/gl2.h>
 
-const int TEXTURE_WIDTH = 256;
-const int TEXTURE_HEIGHT = 240;
+constexpr int TEXTURE_WIDTH = 256;
+constexpr int TEXTURE_HEIGHT = 240;
+
+static std::mutex texture_mutex;
+
 
 const char* vertex_shader_source = R"(
 attribute vec2 position;
@@ -75,10 +79,8 @@ struct Context {
     GLuint program;
     GLuint vbo;
     GLuint texture;
-    std::vector<uint8_t> texture_buffer;
+    std::vector<uint32_t> texture_buffer;
     double time;
-    // std::unique_ptr<windique::Emulator> emulator;
-    // std::unique_ptr<WebGLRenderer> renderer;
     // windique::GamepadState gamepad_state;
     bool turbo_a;
     bool turbo_b;
@@ -111,7 +113,7 @@ static void setup()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
     my_context.vbo = vbo;
 
-    my_context.texture_buffer.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT * 3);
+    my_context.texture_buffer.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT);
 
     GLuint tex_id;
 
@@ -148,19 +150,6 @@ static void update_canvas()
 {
     my_context.frames++;
     if (my_context.running) {
-        // auto em = my_context.emulator.get();
-        // auto the_ks = my_context.gamepad_state;
-        // if (my_context.frames & 1) {
-        //     if (my_context.turbo_a) {
-        //         the_ks.A = true;
-        //     }
-
-        //     if (my_context.turbo_b) {
-        //         the_ks.B = true;
-        //     }
-        // }
-        // em->set_gamepad_state(the_ks, {});
-        // em->kick_one_frame();
     }
 }
 
@@ -170,19 +159,20 @@ static void render()
 
     update_canvas();
 
-    // auto* fb = my_context.emulator->get_frame_buffer();
-    // if (fb) {
-    //     glBindTexture(GL_TEXTURE_2D, my_context.texture);
-    //     glTexSubImage2D(GL_TEXTURE_2D,
-    //                     0,
-    //                     0,
-    //                     0,
-    //                     TEXTURE_WIDTH,
-    //                     TEXTURE_HEIGHT,
-    //                     GL_RGBA,
-    //                     GL_UNSIGNED_BYTE,
-    //                     fb);
-    // }
+
+    {
+        std::lock_guard lk(texture_mutex);
+        glBindTexture(GL_TEXTURE_2D, my_context.texture);
+        glTexSubImage2D(GL_TEXTURE_2D,
+                        0,
+                        0,
+                        0,
+                        TEXTURE_WIDTH,
+                        TEXTURE_HEIGHT,
+                        GL_RGBA,
+                        GL_UNSIGNED_BYTE,
+                        my_context.texture_buffer.data());
+    }
 
     glClear(GL_COLOR_BUFFER_BIT);
     glBindBuffer(GL_ARRAY_BUFFER, my_context.vbo);
@@ -316,34 +306,58 @@ int main()
     return 0;
 }
 
-static void init_emulator()
+static void notify(int noti, void* param)
 {
-    // if (!my_context.emulator) {
-        // printf("init_emulator\n");
-        // my_context.emulator = std::make_unique<windique::Emulator>();
-    // }
+    if (noti == MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER) {
+        auto* renderer_frame = (MesenSoftwareRendererFrame*)param;
+        auto frame = renderer_frame->frame;
+
+        {
+            std::lock_guard lk(texture_mutex);
+            if (frame.width == TEXTURE_WIDTH && frame.height == TEXTURE_HEIGHT) {
+                for(int y = 0; y < frame.height; y ++) {
+                    for(int x = 0; x < frame.width; x ++) {
+                        my_context.texture_buffer[y*frame.width + x] = frame.buffer[y*frame.width + x];
+                    }
+                }
+            }
+            else {
+                printf("texture size is: %d, %d\n", frame.width, frame.height);
+            }
+        }
+    }
 }
 
-EMSCRIPTEN_KEEPALIVE
-extern "C" void load_nes(const uint8_t* nes, size_t len)
-{
-    init_emulator();
-
-    // my_context.emulator->set_pixel_format(windique::PixelFormat::R8_G8_B8_A8);
-    // bool succ = my_context.emulator->load_iNES(nes, len, "");
-    // if (succ) {
-    //     my_context.running = true;
-    // } else {
-    //     printf("load nes: %s\n", succ ? "succ" : "fail");
-    //     my_context.emulator.reset();
-    // }
-}
-
 
 EMSCRIPTEN_KEEPALIVE
-extern "C" void test()
+extern "C" void test(const char* ROM_path)
 {
     mesen_init();
+    mesen_initialize_emu("./", true, false, false);
+
+    MesenNesConfig NES_config = {
+        .user_palette = { 0xFF666666, 0xFF002A88, 0xFF1412A7, 0xFF3B00A4, 0xFF5C007E, 0xFF6E0040, 0xFF6C0600, 0xFF561D00, 0xFF333500, 0xFF0B4800, 0xFF005200, 0xFF004F08, 0xFF00404D, 0xFF000000, 0xFF000000, 0xFF000000, 0xFFADADAD, 0xFF155FD9, 0xFF4240FF, 0xFF7527FE, 0xFFA01ACC, 0xFFB71E7B, 0xFFB53120, 0xFF994E00, 0xFF6B6D00, 0xFF388700, 0xFF0C9300, 0xFF008F32, 0xFF007C8D, 0xFF000000, 0xFF000000, 0xFF000000, 0xFFFFFEFF, 0xFF64B0FF, 0xFF9290FF, 0xFFC676FF, 0xFFF36AFF, 0xFFFE6ECC, 0xFFFE8170, 0xFFEA9E22, 0xFFBCBE00, 0xFF88D800, 0xFF5CE430, 0xFF45E082, 0xFF48CDDE, 0xFF4F4F4F, 0xFF000000, 0xFF000000, 0xFFFFFEFF, 0xFFC0DFFF, 0xFFD3D2FF, 0xFFE8C8FF, 0xFFFBC2FF, 0xFFFEC4EA, 0xFFFECCC5, 0xFFF7D8A5, 0xFFE4E594, 0xFFCFEF96, 0xFFBDF4AB, 0xFFB3F3CC, 0xFFB5EBF2, 0xFFB8B8B8, 0xFF000000, 0xFF000000 },
+        .port_1 = {
+            .key_mapping = {
+                .A = 'J',
+                .B = 'K',
+
+                .up = 'W',
+                .down = 'S',
+                .left = 'A',
+                .right = 'D',
+
+                .start = 'M',
+                .select = 'N',
+            },
+            .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
+        },
+    };
+    mesen_set_NES_config(&NES_config);
+    mesen_register_notification_callback(notify);
+    bool succ = mesen_load_ROM(ROM_path, NULL);
+    printf("load ROM succ?: %d\n", succ);
+    my_context.running = succ;
 }
 
 

@@ -33,7 +33,7 @@ enum MesenControllerType {
     MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 6,
 };
 
-typedef struct {
+typedef struct MesenKeyMapping {
     uint16_t A;
     uint16_t B;
     uint16_t up;
@@ -44,13 +44,13 @@ typedef struct {
     uint16_t select;
 } MesenKeyMapping;
 
-typedef struct
+typedef struct MesenControllerConfig
 {
     MesenKeyMapping key_mapping;
     int type;
 } MesenControllerConfig;
 
-typedef struct {
+typedef struct MesenNesConfig{
     uint32_t user_palette[512];
     MesenControllerConfig port_1;
     MesenControllerConfig port_2;
@@ -89,7 +89,7 @@ enum MesenNotificationType {
     MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER,
 };
 
-typedef struct
+typedef struct MesenSoftwareRendererSurface
 {
     uint32_t* buffer;
     uint32_t width;
@@ -97,7 +97,7 @@ typedef struct
     bool is_dirty;
 } MesenSoftwareRendererSurface;
 
-typedef struct {
+typedef struct MesenSoftwareRendererFrame {
     MesenSoftwareRendererSurface frame;
     MesenSoftwareRendererSurface emulator_HUD;
     MesenSoftwareRendererSurface script_HUD;

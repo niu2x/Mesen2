@@ -18,25 +18,23 @@ globalThis.nativeOnReady = () => {
     // var url = new URL(window.location.href);
     // var name = url.searchParams.get("name");
 
-    // fetchFileAsByteArray(`/cart.db`)
-    // .then((data)=>{
-    //     let ptr = globalThis.Module._malloc(data.length);
-    //     globalThis.Module.HEAPU8.set(data, ptr);
-    //     globalThis.Module._load_cart_db(ptr, data.length);
-    //     globalThis.Module._free(ptr);
-    // })
-    // .then(()=>{
-    //     return fetchFileAsByteArray(`/ROM/iNES/${name}`)
-    // })
-    // .then((data)=>{
-    //     let ptr = globalThis.Module._malloc(data.length);
-    //     globalThis.Module.HEAPU8.set(data, ptr);
-    //     globalThis.Module._load_nes(ptr, data.length);
-    //     globalThis.Module._free(ptr);
-    // })
-    // .catch((err)=>{
-    //     console.error(err)
-    // })
-    globalThis.Module._test();
-    console.log("succ")
+    console.log("nativeOnReady 1")
+
+    fetchFileAsByteArray(`/test.nes`)
+    .then((data)=>{
+        console.log("nativeOnReady 2")
+        globalThis.FS.writeFile("/test.nes", data)
+        globalThis.Module.ccall(
+          'test',  
+          'void',       
+          ['string'],
+          ["/test.nes"]   
+        );
+        console.log("nativeOnReady 3")
+    })
+    .catch((err)=>{
+        console.log("nativeOnReady 4")
+        console.error(err)
+    })
+    console.log("nativeOnReady 5")
 }

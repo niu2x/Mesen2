@@ -16,8 +16,10 @@ void mesen_initialize_emu(const char* home_folder,
     bool no_input)
 {
     static struct {
+        char _;
     } fake_window;
     static struct {
+        char _;
     } fake_viewer;
     InitializeEmu(home_folder,
         &fake_window,
