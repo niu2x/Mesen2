@@ -1,3 +1,5 @@
+src/WebNative.*
+
 # Logs
 logs
 *.log

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <meta http-equiv="Cross-Origin-Embedder-Policy" content="require-corp">
+  <meta http-equiv="Cross-Origin-Opener-Policy" content="same-origin">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Demo</title>
@@ -32,12 +34,22 @@
   </style>
 </head>
 <body>
-
   <div class="container">
     <canvas id="canvas" width="256" height="240"></canvas>
   </div>
 
-  <script src="main.js"> </script>
-  <script src="WebNative.js"> </script>
+  <script>
+    // 哈希由 HtmlWebpackPlugin 的 output.filename 生成
+    globalThis.Module = {
+      locateFile: (path) => {
+        if (path.endsWith('.wasm')) return "<%= htmlWebpackPlugin.manifest['WebNative.wasm'] %>";
+        if (path.endsWith('.worker.js')) return "<%= htmlWebpackPlugin.manifest['WebNative.worker.js'] %>";
+        return path;
+      }
+    };
+  </script>
+
+  <script src="<%= htmlWebpackPlugin.manifest['WebNative.js'] %>"> </script>
+
 </body>
 </html>

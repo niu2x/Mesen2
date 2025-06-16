@@ -5,7 +5,7 @@ build-WebAssembly:
 	cmake -S .. -B ../build/$(directory) \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DCMAKE_TOOLCHAIN_FILE=$(toolchain)
-	cmake --build ../build/$(directory) -j 7
+	cmake --build ../build/$(directory) -j 2
 	cmake --install ../build/$(directory) --prefix ../dist/$(directory)
 
 	cmake -S . -B ../build/WebAssembly \
@@ -14,9 +14,8 @@ build-WebAssembly:
 		-DDIST=$(PWD)/../dist/$(directory)
 	cmake --build ../build/WebAssembly
 
-	npx webpack
 
-	cp src/index.html dist/
-	cp ../build/WebAssembly/WebNative.js dist/
-	cp ../build/WebAssembly/WebNative.worker.js dist/
-	cp ../build/WebAssembly/WebNative.wasm dist/
+	cp ../build/WebAssembly/WebNative.js src/
+	cp ../build/WebAssembly/WebNative.worker.js src/
+	cp ../build/WebAssembly/WebNative.wasm src/
+	npx webpack
