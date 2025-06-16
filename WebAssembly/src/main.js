@@ -40,8 +40,8 @@ function checkSupport() {
 }
 
 globalThis.nativeOnReady = () => {
-    if(!checkSupport())
-        return; 
+    // if(!checkSupport())
+    //     return; 
 
     fetchFileAsByteArray(`/test.nes`)
     .then((data)=>{
