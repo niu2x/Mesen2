@@ -31,5 +31,4 @@ target_link_options(WebNative PRIVATE
     "-sALLOW_MEMORY_GROWTH=1"
     "-sEXPORTED_FUNCTIONS=_free,_main,_malloc"
     "-sEXPORTED_RUNTIME_METHODS=ccall,cwrap"
-    "-sPROXY_TO_PTHREAD"
 )

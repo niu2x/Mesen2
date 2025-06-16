@@ -1,5 +1,6 @@
 #include <emscripten/emscripten.h>
 #include <emscripten/html5.h>
+#include <emscripten/threading.h>
 #include <vector>
 #include <mutex>
 #include <Mesen/Mesen.h>
@@ -80,16 +81,10 @@ struct Context {
     GLuint vbo;
     GLuint texture;
     std::vector<uint32_t> texture_buffer;
-    double time;
-    // windique::GamepadState gamepad_state;
-    bool turbo_a;
-    bool turbo_b;
-    uint8_t frames;
-
     bool running;
 };
 
-static Context my_context = { 0, 0, 0, {}, 0, /*nullptr, false,*/ false, false, 0, false };
+static Context my_context = { 0, 0, 0, {},  false };
 
 struct Vertex {
     float x, y;
@@ -98,7 +93,6 @@ struct Vertex {
 
 static void setup()
 {
-    my_context.time = 0;
     my_context.program = create_program(vertex_shader_source,
                                         fragment_shader_source);
 
@@ -146,19 +140,11 @@ static void cleanup()
     glDeleteProgram(my_context.program);
 }
 
-static void update_canvas()
-{
-    my_context.frames++;
-    if (my_context.running) {
-    }
-}
 
 static void render()
 {
-    my_context.time += 1.0 / 60;
-
-    update_canvas();
-
+    EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_get_current_context();
+    emscripten_webgl_make_context_current(ctx);
 
     {
         std::lock_guard lk(texture_mutex);
@@ -224,57 +210,17 @@ EM_BOOL key_callback(int eventType,
 
         bool pressed = eventType == EMSCRIPTEN_EVENT_KEYDOWN;
         switch (e->keyCode) {
-            case 32: {
-                // my_context.gamepad_state.select = pressed;
-                handled = EM_TRUE;
-                break;
-            }
-            case 13: {
-                // my_context.gamepad_state.start = pressed;
-                handled = EM_TRUE;
-                break;
-            }
-            case 'A': {
-                // my_context.gamepad_state.left = pressed;
-                handled = EM_TRUE;
-                break;
-            }
-            case 'W': {
-                // my_context.gamepad_state.up = pressed;
-                handled = EM_TRUE;
-                break;
-            }
-            case 'D': {
-                // my_context.gamepad_state.right = pressed;
-                handled = EM_TRUE;
-                break;
-            }
-            case 'S': {
-                // my_context.gamepad_state.down = pressed;
-                handled = EM_TRUE;
-                break;
-            }
-            // case 'U': {
-            //     my_context.gamepad_state.B = pressed;
-            //     handled = EM_TRUE;
-            //     break;
-            // }
-            case 'K': {
-                // my_context.gamepad_state.A = pressed;
-                handled = EM_TRUE;
-                break;
-            }
+            case 32:
+            case 13: 
+            case 'A': 
+            case 'W': 
+            case 'D': 
+            case 'S': 
+            case 'K': 
             case 'J': {
-                // my_context.gamepad_state.B = pressed;
-                // my_context.turbo_b = pressed;
                 handled = EM_TRUE;
-                break;
+                mesen_set_key_state(e->keyCode, pressed);
             }
-                // case 'I': {
-                //     my_context.turbo_a = pressed;
-                //     handled = EM_TRUE;
-                //     break;
-                // }
         }
     }
 
@@ -283,6 +229,12 @@ EM_BOOL key_callback(int eventType,
 
 int main()
 {
+    // if (emscripten_is_main_browser_thread()) {
+    //     printf("运行在主线程（PROXY_TO_PTHREAD 未生效）\n");
+    // } else {
+    //     printf("运行在 Worker 线程（PROXY_TO_PTHREAD 已生效）\n");
+    // }
+
     emscripten_set_canvas_element_size(
         "#canvas", TEXTURE_WIDTH, TEXTURE_HEIGHT);
     EmscriptenWebGLContextAttributes attrs;
@@ -347,8 +299,8 @@ extern "C" void test(const char* ROM_path)
                 .left = 'A',
                 .right = 'D',
 
-                .start = 'M',
-                .select = 'N',
+                .start = 13,
+                .select = 32,
             },
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
         },
