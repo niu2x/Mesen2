@@ -8,31 +8,7 @@
 extern "C" {
 #endif
 
-MESEN_API uint32_t mesen_get_version();
-MESEN_API const char* mesen_get_build_date();
-
-MESEN_API void mesen_init();
-
-MESEN_API void mesen_initialize_emu(const char* home_folder,
-    bool no_audio, bool no_video, bool no_input);
-
-MESEN_API void mesen_release();
-
-MESEN_API bool mesen_load_ROM(const char* file, const char* patch_file);
-
-MESEN_API bool mesen_is_running();
-MESEN_API bool mesen_is_paused();
-MESEN_API void mesen_stop();
-MESEN_API void mesen_pause();
-MESEN_API void mesen_resume();
-
-MESEN_API void mesen_dump_ROM_info();
-
-MESEN_API void mesen_take_screenshot(const char* save_to_path);
-MESEN_API void mesen_add_known_game_folder(const char* folder);
-
-MESEN_API double mesen_get_aspect_ratio();
-
+// Should keep consistent with ControllerType (Core/Shared/SettingTypes.h)
 enum MesenControllerType {
     MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 5,
 };
@@ -58,22 +34,17 @@ typedef struct MesenControllerConfig
     int type;
 } MesenControllerConfig;
 
-typedef uint32_t MesenUserPalette[512];
-
-MESEN_API extern const MesenUserPalette mesen_default_palette;
+typedef uint32_t MesenPalette[512];
 
 typedef struct MesenNesConfig {
-    MesenUserPalette user_palette;
+    MesenPalette user_palette;
     MesenControllerConfig port_1;
     MesenControllerConfig port_2;
 } MesenNesConfig;
 
-MESEN_API void mesen_set_NES_config(const MesenNesConfig* NES_config);
-MESEN_API void mesen_set_output_to_stdout(bool enable);
-
 typedef void (*NotificationCallback)(int event_type, void* param);
 
-// Should keep consistent with ConsoleNotificationType
+// Should keep consistent with ConsoleNotificationType (Core/Shared/SettingTypes.h)
 enum MesenNotificationType {
     MESEN_NOTIFICATION_TYPE_GAME_LOADED,
     MESEN_NOTIFICATION_TYPE_STATE_LOADED,
@@ -115,12 +86,75 @@ typedef struct MesenSoftwareRendererFrame {
     MesenSoftwareRendererSurface script_HUD;
 } MesenSoftwareRendererFrame;
 
+// Should keep consistent with same as VideoFilterType (Core/Shared/SettingTypes.h)
+enum MesenVideoFilterType {
+    MESEN_VIDEO_FILTER_TYPE_NONE,
+    MESEN_VIDEO_FILTER_TYPE_NTSC_BLARGG,
+    MESEN_VIDEO_FILTER_TYPE_NTSC_BISQWIT,
+    MESEN_VIDEO_FILTER_TYPE_LCD_GRID,
+    MESEN_VIDEO_FILTER_TYPE_X_BRZ_2X,
+    MESEN_VIDEO_FILTER_TYPE_X_BRZ_3X,
+    MESEN_VIDEO_FILTER_TYPE_X_BRZ_4X,
+    MESEN_VIDEO_FILTER_TYPE_X_BRZ_5X,
+    MESEN_VIDEO_FILTER_TYPE_X_BRZ_6X,
+    MESEN_VIDEO_FILTER_TYPE_HQ_2X,
+    MESEN_VIDEO_FILTER_TYPE_HQ_3X,
+    MESEN_VIDEO_FILTER_TYPE_HQ_4X,
+    MESEN_VIDEO_FILTER_TYPE_SCALE_2X,
+    MESEN_VIDEO_FILTER_TYPE_SCALE_3X,
+    MESEN_VIDEO_FILTER_TYPE_SCALE_4X,
+};
+
+typedef struct MesenVideoConfig {
+    MesenVideoFilterType video_filter;
+    double brightness;
+    double contrast;
+    double hue;
+    double saturation;
+} MesenVideoConfig;
+
+MESEN_API extern const MesenPalette mesen_default_palette;
+
+// /init & release
+MESEN_API void mesen_init();
+MESEN_API void mesen_initialize_emu(const char* home_folder,
+    bool no_audio, bool no_video, bool no_input);
+
+MESEN_API void mesen_release();
+
+// important: set NES config
+MESEN_API void mesen_set_NES_config(const MesenNesConfig* NES_config);
+
+MESEN_API bool mesen_load_ROM(const char* file, const char* patch_file);
+
+MESEN_API bool mesen_is_running();
+MESEN_API bool mesen_is_paused();
+MESEN_API void mesen_stop();
+MESEN_API void mesen_pause();
+MESEN_API void mesen_resume();
+
+MESEN_API uint32_t mesen_get_version();
+MESEN_API const char* mesen_get_build_date();
+
+MESEN_API void mesen_dump_ROM_info();
+
+MESEN_API void mesen_take_screenshot(const char* save_to_path);
+
+MESEN_API double mesen_get_aspect_ratio();
+
+MESEN_API void mesen_set_output_to_stdout(bool enable);
+
+// register / unregister notification callback
 MESEN_API void* mesen_register_notification_callback(NotificationCallback);
 MESEN_API void mesen_unregister_notification_callback(void* handle);
 MESEN_API const char* mesen_get_notification_type_name(int noti_type);
 
+// input: tell emulator key state
 MESEN_API void mesen_set_key_state(uint16_t scan_code, bool state);
 MESEN_API void mesen_reset_key_state();
+
+// config API
+MESEN_API void mesen_set_video_config(const MesenVideoConfig* video_config);
 
 #ifdef __cplusplus
 }

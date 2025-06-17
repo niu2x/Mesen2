@@ -178,7 +178,7 @@ int main(int argc, char* argv[])
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
         },
     };
-    memcpy(NES_config.user_palette, mesen_default_palette, sizeof(MesenUserPalette));
+    memcpy(NES_config.user_palette, mesen_default_palette, sizeof(MesenPalette));
     mesen_set_NES_config(&NES_config);
     // mesen_set_output_to_stdout(true);
     mesen_register_notification_callback(notify);
