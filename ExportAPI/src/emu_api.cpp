@@ -70,4 +70,13 @@ const char* mesen_get_notification_type_name(int noti_type)
 {
     return get_notification_type_name((ConsoleNotificationType)noti_type);
 }
+
+void mesen_add_known_game_folder(const char* folder)
+{
+    AddKnownGameFolder((char*)folder);
+}
+
+void mesen_stop() { Stop(); }
+void mesen_pause() { Pause(); }
+void mesen_resume() { Resume(); }
 }

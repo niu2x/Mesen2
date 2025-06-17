@@ -20,12 +20,16 @@ MESEN_API void mesen_release();
 
 MESEN_API bool mesen_load_ROM(const char* file, const char* patch_file);
 
-MESEN_API void mesen_dump_ROM_info();
-
 MESEN_API bool mesen_is_running();
 MESEN_API bool mesen_is_paused();
+MESEN_API void mesen_stop();
+MESEN_API void mesen_pause();
+MESEN_API void mesen_resume();
+
+MESEN_API void mesen_dump_ROM_info();
 
 MESEN_API void mesen_take_screenshot();
+MESEN_API void mesen_add_known_game_folder(const char* folder);
 
 MESEN_API double mesen_get_aspect_ratio();
 
