@@ -3,6 +3,7 @@
 #include <emscripten/threading.h>
 #include <vector>
 #include <mutex>
+#include <thread>
 #include <Mesen/Mesen.h>
 #include <GLES2/gl2.h>
 
@@ -292,12 +293,17 @@ static void notify(int noti, void* param)
     }
 }
 
+std::once_flag emulator_init;
+
 
 EMSCRIPTEN_KEEPALIVE
-extern "C" void test(const char* ROM_path)
+extern "C" void load_NES_file(const char* ROM_path)
 {
-    mesen_init();
-    mesen_initialize_emu("./", true, false, false);
+    std::call_once(emulator_init, []() {
+        mesen_init();
+        mesen_initialize_emu("./", true, false, false);
+        mesen_register_notification_callback(notify);
+    });
 
     MesenNesConfig NES_config = {
         .user_palette = {},
@@ -328,7 +334,6 @@ extern "C" void test(const char* ROM_path)
     }
 
     mesen_set_NES_config(&NES_config);
-    mesen_register_notification_callback(notify);
     bool succ = mesen_load_ROM(ROM_path, NULL);
     printf("load ROM succ?: %d\n", succ);
     my_context.running = succ;

@@ -27,7 +27,7 @@ function isSharedArrayBufferSupported() {
     if (typeof SharedArrayBuffer === 'undefined') {
         return false;
     }
-    
+
     try {
         const sab = new SharedArrayBuffer(1);
         return true;
@@ -41,21 +41,70 @@ function checkSupport() {
     return isWebWorkerSupported() && isSharedArrayBufferSupported();
 }
 
-globalThis.nativeOnReady = () => {
-    // if(!checkSupport())
-    //     return; 
+globalThis.nativeReady = false;
 
-    fetchFileAsByteArray(`/test.nes`)
-    .then((data)=>{
-        globalThis.FS.writeFile("/test.nes", data)
-        globalThis.Module.ccall(
-          'test',  
-          'void',       
-          ['string'],
-          ["/test.nes"]   
-        );
-    })
-    .catch((err)=>{
-        console.error(err)
-    })
+globalThis.nativeOnReady = () => {
+    globalThis.nativeReady = true
 }
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Button event handlers
+    document.getElementById('load-rom').addEventListener('click', function() {
+        if(!globalThis.nativeReady)
+            return;
+        
+        document.getElementById('rom-file').click();
+    });
+
+    document.getElementById('rom-file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('game-title').textContent = file.name;
+            document.getElementById('game-status').textContent = 'Loading file';
+            // Here you would load the ROM file into your emulator
+
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const arrayBuffer = e.target.result;
+                const byteArray = new Uint8Array(arrayBuffer);
+
+                document.getElementById('game-status').textContent = 'Ready to play';
+                globalThis.FS.writeFile(`/${file.name}`, byteArray)
+
+                globalThis.Module.ccall(
+                    'load_NES_file',
+                    'void',
+                    ['string'],
+                    [`/${file.name}`]
+                );
+
+            };
+
+            reader.onerror = function() {
+                document.getElementById('game-status').textContent = 'Error loading file';
+                console.error('Error reading file');
+            };
+
+            // Read the file as ArrayBuffer
+            reader.readAsArrayBuffer(file);
+
+        }
+    });
+
+    document.getElementById('play-btn').addEventListener('click', function() {
+        document.getElementById('game-status').textContent = 'Playing';
+        // Start emulation
+    });
+
+    document.getElementById('pause-btn').addEventListener('click', function() {
+        document.getElementById('game-status').textContent = 'Paused';
+        // Pause emulation
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', function() {
+        document.getElementById('game-status').textContent = 'Reset';
+        // Reset emulator
+    });
+});

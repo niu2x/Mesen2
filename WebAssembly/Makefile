@@ -20,8 +20,5 @@ build-WebAssembly:
 	cp ../build/WebAssembly/WebNative.js src/
 	cp ../build/WebAssembly/WebNative.worker.js src/
 	cp ../build/WebAssembly/WebNative.wasm src/
-	mkdir -p dist
-	rm -rf dist/*.wasm
-	rm -rf dist/*.js
-	rm -rf dist/*.txt
+	rm -rf dist
 	npx webpack
