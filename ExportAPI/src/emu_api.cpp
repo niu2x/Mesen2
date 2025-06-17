@@ -77,3 +77,8 @@ void mesen_add_known_game_folder(const char* folder)
 void mesen_stop() { Stop(); }
 void mesen_pause() { Pause(); }
 void mesen_resume() { Resume(); }
+
+void mesen_display_message(const char* title, const char* msg, const char* param1, const char* param2)
+{
+    MessageManager::DisplayMessage(title, msg, param1, param2);
+}

@@ -228,6 +228,7 @@ EM_BOOL key_callback(int eventType,
             case 'I': {
                 handled = EM_TRUE;
                 mesen_set_key_state(e->keyCode, pressed);
+                mesen_display_message("hello", "click keyboard", "", "");
             }
         }
     }
@@ -270,14 +271,18 @@ static void notify(int noti, void* param)
 {
     if (noti == MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER) {
         auto* renderer_frame = (MesenSoftwareRendererFrame*)param;
-        auto frame = renderer_frame->frame;
 
         {
             std::lock_guard lk(texture_mutex);
+
+            auto frame = renderer_frame->frame;
+            auto emulator_HUD = renderer_frame->emulator_HUD;
+
             if (frame.width == TEXTURE_WIDTH && frame.height == TEXTURE_HEIGHT) {
                 for(int y = 0; y < frame.height; y ++) {
                     for(int x = 0; x < frame.width; x ++) {
-                        my_context.texture_buffer[y*frame.width + x] = frame.buffer[y*frame.width + x];
+                        my_context.texture_buffer[y * frame.width + x]
+                            = frame.buffer[y * frame.width + x] | emulator_HUD.buffer[y * frame.width + x];
                     }
                 }
             }

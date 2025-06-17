@@ -10,7 +10,7 @@ add_custom_command(
                     ${CMAKE_CURRENT_SOURCE_DIR}/UI/Dependencies/MesenNesDB.txt
                     ${CMAKE_CURRENT_BINARY_DIR}/GEN/embed_NES_DB.inc
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ExportAPI/tools/generate_NES_DB.py
-    COMMENT "Generating my_generated_file.txt"
+    COMMENT "Generating embed_NES_DB.inc"
 )
 
 add_custom_target(embed_NES_DB

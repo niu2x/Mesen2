@@ -143,6 +143,7 @@ MESEN_API void mesen_take_screenshot(const char* save_to_path);
 MESEN_API double mesen_get_aspect_ratio();
 
 MESEN_API void mesen_set_output_to_stdout(bool enable);
+MESEN_API void mesen_display_message(const char* title, const char* msg, const char* param1, const char* param2);
 
 // register / unregister notification callback
 MESEN_API void* mesen_register_notification_callback(NotificationCallback);

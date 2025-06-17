@@ -24,8 +24,7 @@ int main(int argc, char* argv[])
 
     mesen_load_ROM(argv[1], NULL);
 
-    std::this_thread::sleep_for(std::chrono::seconds {8});
-
+    std::this_thread::sleep_for(std::chrono::seconds { 8 });
     mesen_take_screenshot(argv[2]);
 
     mesen_release();
