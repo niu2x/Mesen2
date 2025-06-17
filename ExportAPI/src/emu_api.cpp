@@ -2,8 +2,6 @@
 #include <InteropDLL/EmuApiWrapper.cpp>
 #include "dump.h"
 
-extern "C" {
-
 uint32_t mesen_get_version() { return GetMesenVersion(); }
 
 const char* mesen_get_build_date() { return GetMesenBuildDate(); }
@@ -51,7 +49,7 @@ void mesen_dump_ROM_info()
 bool mesen_is_running() { return IsRunning(); }
 bool mesen_is_paused() { return IsPaused(); }
 
-void mesen_take_screenshot() { TakeScreenshot(); }
+void mesen_take_screenshot(const char* save_to_path) { _emu->GetVideoDecoder()->TakeScreenshot(save_to_path); }
 
 double mesen_get_aspect_ratio() {
     return GetAspectRatio();
@@ -79,4 +77,3 @@ void mesen_add_known_game_folder(const char* folder)
 void mesen_stop() { Stop(); }
 void mesen_pause() { Pause(); }
 void mesen_resume() { Resume(); }
-}

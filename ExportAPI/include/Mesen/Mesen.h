@@ -28,7 +28,7 @@ MESEN_API void mesen_resume();
 
 MESEN_API void mesen_dump_ROM_info();
 
-MESEN_API void mesen_take_screenshot();
+MESEN_API void mesen_take_screenshot(const char* save_to_path);
 MESEN_API void mesen_add_known_game_folder(const char* folder);
 
 MESEN_API double mesen_get_aspect_ratio();
@@ -58,8 +58,12 @@ typedef struct MesenControllerConfig
     int type;
 } MesenControllerConfig;
 
-typedef struct MesenNesConfig{
-    uint32_t user_palette[512];
+typedef uint32_t MesenUserPalette[512];
+
+MESEN_API extern const MesenUserPalette mesen_default_palette;
+
+typedef struct MesenNesConfig {
+    MesenUserPalette user_palette;
     MesenControllerConfig port_1;
     MesenControllerConfig port_2;
 } MesenNesConfig;
