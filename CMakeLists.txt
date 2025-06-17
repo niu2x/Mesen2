@@ -4,6 +4,20 @@ project(Mesen2 VERSION 0.1.0 LANGUAGES CXX C)
 
 include(GenerateExportHeader)
 
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GEN/embed_NES_DB.inc
+    COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/ExportAPI/tools/generate_NES_DB.py 
+                    ${CMAKE_CURRENT_SOURCE_DIR}/UI/Dependencies/MesenNesDB.txt
+                    ${CMAKE_CURRENT_BINARY_DIR}/GEN/embed_NES_DB.inc
+    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ExportAPI/tools/generate_NES_DB.py
+    COMMENT "Generating my_generated_file.txt"
+)
+
+add_custom_target(embed_NES_DB
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GEN/embed_NES_DB.inc
+)
+
+
 # MesenLib
 add_library(MesenLib STATIC "")
 
@@ -25,6 +39,10 @@ target_include_directories(MesenLib PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/Utilities
 )
 
+target_include_directories(MesenLib PRIVATE
+    ${CMAKE_CURRENT_BINARY_DIR}/GEN
+)
+
 set_target_properties(MesenLib PROPERTIES 
     CXX_STANDARD 17
     C_VISIBILITY_PRESET hidden
@@ -32,6 +50,8 @@ set_target_properties(MesenLib PROPERTIES
     VISIBILITY_INLINES_HIDDEN ON
     POSITION_INDEPENDENT_CODE ON
 )
+
+add_dependencies(MesenLib embed_NES_DB)
 
 # MesenRT
 add_library(MesenRT SHARED "")
@@ -48,6 +68,7 @@ generate_export_header(MesenRT
     EXPORT_MACRO_NAME MESEN_API
     EXPORT_FILE_NAME ExportAPI/include/Mesen/api.h
 )
+
 
 # file(GLOB_RECURSE export_src 
 #     ExportAPI/src/*.cpp
@@ -68,8 +89,8 @@ target_include_directories(MesenRT PUBLIC
 target_link_libraries(MesenRT PRIVATE 
     MesenLib
 )
-
-target_compile_definitions(MesenRT PRIVATE USE_CMAKE ONLY_SOFTWARE_DEVICE)
+target_compile_definitions(MesenLib PRIVATE EMBED_NES_DB)
+target_compile_definitions(MesenRT PRIVATE USE_CMAKE_EXPORT_HEADER ONLY_SOFTWARE_DEVICE)
 
 # Install MesenRT
 

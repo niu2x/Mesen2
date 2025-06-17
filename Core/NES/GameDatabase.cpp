@@ -82,8 +82,17 @@ void GameDatabase::InitDatabase()
 	if(!_initialized) {
 		auto lock = _loadLock.AcquireSafe();
 		if(!_initialized) {
+			#if defined(EMBED_NES_DB)
+
+			const char *embed_nes_db =
+			#include "embed_NES_DB.inc"
+			;
+			std::stringstream db(embed_nes_db);
+
+			#else
 			string dbPath = FolderUtilities::CombinePath(FolderUtilities::GetHomeFolder(), "MesenNesDB.txt");
 			ifstream db(dbPath, ios::in | ios::binary);
+			#endif
 			LoadGameDb(db);
 			_initialized = true;
 		}

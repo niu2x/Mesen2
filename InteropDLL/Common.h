@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(USE_CMAKE)
+#if defined(USE_CMAKE_EXPORT_HEADER)
     #define __stdcall
     #define DllExport
 #else
