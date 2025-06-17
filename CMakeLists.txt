@@ -92,10 +92,10 @@ option(BUILD_Examples "BUILD_Examples" OFF)
 
 if(BUILD_Examples)
     # TerminalPlayer
-    find_package(OpenCV REQUIRED)
-    add_executable(TerminalPlayer ExportAPI/examples/TerminalPlayer/main.cpp)
-    target_include_directories(TerminalPlayer PRIVATE ${OpenCV_INCLUDE_DIRS})
-    target_link_libraries(TerminalPlayer PRIVATE MesenRT ${OpenCV_LIBS} ncurses)
+    # find_package(OpenCV REQUIRED)
+    # add_executable(TerminalPlayer ExportAPI/examples/TerminalPlayer/main.cpp)
+    # target_include_directories(TerminalPlayer PRIVATE ${OpenCV_INCLUDE_DIRS})
+    # target_link_libraries(TerminalPlayer PRIVATE MesenRT ${OpenCV_LIBS} ncurses)
 
     # TakeScreenshot
     add_executable(TakeScreenshot ExportAPI/examples/TakeScreenshot/main.cpp)
