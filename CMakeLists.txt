@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
 
-project(Mesen2 VERSION 0.1.0 LANGUAGES CXX C)
+project(Mesen2 VERSION 0.1.0 LANGUAGES CXX)
 
 include(GenerateExportHeader)
 
@@ -51,7 +51,10 @@ set_target_properties(MesenLib PROPERTIES
     POSITION_INDEPENDENT_CODE ON
 )
 
+target_precompile_headers(MesenLib PRIVATE Core/pch.h)
+
 add_dependencies(MesenLib embed_NES_DB)
+
 
 # MesenRT
 add_library(MesenRT SHARED "")
