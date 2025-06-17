@@ -228,7 +228,6 @@ EM_BOOL key_callback(int eventType,
             case 'I': {
                 handled = EM_TRUE;
                 mesen_set_key_state(e->keyCode, pressed);
-                mesen_display_message("hello", "click keyboard", "", "");
             }
         }
     }
