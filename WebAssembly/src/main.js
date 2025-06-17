@@ -1,4 +1,6 @@
 import $ from "jquery";
+import './style.scss'
+import * as bootstrap from 'bootstrap'
 
 async function fetchFileAsByteArray(url) {
     // Fetch the file from the specified URL

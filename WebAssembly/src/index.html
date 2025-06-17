@@ -7,37 +7,90 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Demo</title>
   <style>
-    html, body {
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: black;
+    #canvas {
+      background-color: #000;
+      display: block;
+      margin: 0 auto;
     }
-
-    .container {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    
+    .emulator-container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
     }
-
-    .container canvas {
-      /*display: block;*/
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+    
+    body {
+      background-color: #f8f9fa;
+      padding-top: 20px;
     }
-
   </style>
 </head>
 <body>
+  
+  
   <div class="container">
-    <canvas id="canvas" width="256" height="240"></canvas>
+    <header class="text-center mb-4">
+      <h1 class="display-4">NES Emulator</h1>
+      <p class="lead">Play classic NES games in your browser</p>
+    </header>
+
+    <div class="emulator-container">
+        <!-- Main emulator canvas -->
+      <canvas id="canvas" width="640" height="480"></canvas>
+        
+        <!-- Controls -->
+      <div class="row mt-3">
+        <div class="col-md-6">
+          <div class="d-grid gap-2">
+            <button id="load-rom" class="btn btn-primary">
+              <i class="bi bi-upload"></i> Load ROM
+            </button>
+            <input type="file" id="rom-file" class="d-none" accept=".nes">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="btn-group w-100" role="group">
+            <button id="play-btn" class="btn btn-success">
+                <i class="bi bi-play-fill"></i> Play
+            </button>
+            <button id="pause-btn" class="btn btn-warning">
+                <i class="bi bi-pause-fill"></i> Pause
+            </button>
+            <button id="reset-btn" class="btn btn-danger">
+                <i class="bi bi-arrow-counterclockwise"></i> Reset
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Game info -->
+      <div class="card mt-3">
+        <div class="card-header">
+          Game Information
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-6">
+              <p><strong>Current Game:</strong> <span id="game-title">None loaded</span></p>
+              <p><strong>Status:</strong> <span id="game-status">Idle</span></p>
+            </div>
+            <div class="col-md-6">
+              <p><strong>Controls:</strong></p>
+              <ul class="list-unstyled">
+                <li>Arrow Keys: Directional Pad</li>
+                <li>Z: A Button</li>
+                <li>X: B Button</li>
+                <li>Enter: Start</li>
+                <li>Shift: Select</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
+
 
   <script>
     globalThis.Module = {
