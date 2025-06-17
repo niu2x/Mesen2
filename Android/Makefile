@@ -5,6 +5,7 @@ build-Android:
 	cmake -S .. -B ../build/$(directory) \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DANDROID_ABI=arm64-v8a \
+		-GNinja \
 		-DCMAKE_TOOLCHAIN_FILE=$(toolchain)
 	cmake --build ../build/$(directory) -j 7
 	cmake --install ../build/$(directory) --prefix ../dist/$(directory)

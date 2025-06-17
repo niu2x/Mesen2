@@ -5,16 +5,16 @@ project(Mesen2 VERSION 0.1.0 LANGUAGES CXX)
 include(GenerateExportHeader)
 
 add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/GEN/embed_NES_DB.inc
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/gen_src/embed_NES_DB.inc
     COMMAND python ${CMAKE_CURRENT_SOURCE_DIR}/ExportAPI/tools/generate_NES_DB.py 
                     ${CMAKE_CURRENT_SOURCE_DIR}/UI/Dependencies/MesenNesDB.txt
-                    ${CMAKE_CURRENT_BINARY_DIR}/GEN/embed_NES_DB.inc
+                    ${CMAKE_CURRENT_BINARY_DIR}/gen_src/embed_NES_DB.inc
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/ExportAPI/tools/generate_NES_DB.py
     COMMENT "Generating embed_NES_DB.inc"
 )
 
 add_custom_target(embed_NES_DB
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/GEN/embed_NES_DB.inc
+    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/gen_src/embed_NES_DB.inc
 )
 
 
@@ -40,7 +40,7 @@ target_include_directories(MesenLib PUBLIC
 )
 
 target_include_directories(MesenLib PRIVATE
-    ${CMAKE_CURRENT_BINARY_DIR}/GEN
+    ${CMAKE_CURRENT_BINARY_DIR}/gen_src
 )
 
 set_target_properties(MesenLib PROPERTIES 

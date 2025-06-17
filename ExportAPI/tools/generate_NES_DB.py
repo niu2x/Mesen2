@@ -6,7 +6,7 @@ if '__main__' == __name__:
     infile = sys.argv[1]
     outfile = sys.argv[2]
 
-    os.makedirs(os.path.dirname(outfile))
+    os.makedirs(os.path.dirname(outfile), exist_ok=True)
 
     with open(outfile, 'wt') as out:
         out.write('R"RAW(\n')
