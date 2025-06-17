@@ -255,3 +255,10 @@ void VideoDecoder::TakeScreenshot(std::stringstream &stream)
 		_videoFilter->TakeScreenshot(_videoFilterType, "", &stream);
 	}
 }
+
+void VideoDecoder::TakeScreenshot(const std::string &save_to_path)
+{
+	if(_videoFilter) {
+		_videoFilter->TakeScreenshot(_videoFilterType, save_to_path);
+	}
+}

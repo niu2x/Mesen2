@@ -50,7 +50,9 @@ public:
 	void Init();
 
 	void DecodeFrame(bool synchronous = false);
+
 	void TakeScreenshot();
+	void TakeScreenshot(const std::string& save_to_path);
 	void TakeScreenshot(std::stringstream &stream);
 	
 	void ForceFilterUpdate() { _forceFilterUpdate = true; }
