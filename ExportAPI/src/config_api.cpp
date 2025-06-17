@@ -49,6 +49,7 @@ void mesen_set_video_config(const MesenVideoConfig* video_config)
     curr_config.Contrast = video_config->contrast;
     curr_config.Hue = video_config->hue;
     curr_config.Saturation = video_config->saturation;
+    curr_config.UseBilinearInterpolation = true;
 
     _emu->GetSettings()->SetVideoConfig(curr_config);
 }
