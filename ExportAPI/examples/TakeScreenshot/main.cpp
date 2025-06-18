@@ -5,6 +5,17 @@
 #include <string.h>
 #include <thread>
 
+void notify(int noti, void* param)
+{
+    if (noti == MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER) {
+        auto* renderer_frame = (MesenSoftwareRendererFrame*)param;
+        auto frame = renderer_frame->frame;
+        auto emulator_HUD = renderer_frame->emulator_HUD;
+        printf("frame %d %d\n", frame.width, frame.height);
+        printf("emulator_HUD %d %d\n", emulator_HUD.width, emulator_HUD.height);
+    }
+}
+
 int main(int argc, char* argv[])
 {
     mesen_init();
@@ -22,9 +33,20 @@ int main(int argc, char* argv[])
     };
     mesen_set_video_config(&video_config);
 
+    MesenPreferences preferences {
+        .hud_size = MESEN_HUD_DISPLAY_SIZE_SCALED,
+        .show_fps = false,
+        .show_frame_counter = false,
+        .show_game_timer = false,
+        .show_debug_info = false,
+    };
+    mesen_set_preferences(&preferences);
+
+    mesen_register_notification_callback(notify);
+
     mesen_load_ROM(argv[1], NULL);
 
-    std::this_thread::sleep_for(std::chrono::seconds { 8 });
+    std::this_thread::sleep_for(std::chrono::seconds { 1 });
     mesen_take_screenshot(argv[2]);
 
     mesen_release();

@@ -13,9 +13,6 @@
 #define RGBA_TO_ABGR(color) ( \
     (((color) & 0xFF000000)) | (((color) & 0x00FF0000) >> 8) | (((color) & 0x0000FF00) << 0) | (((color) & 0x000000FF) << 16))
 
-constexpr int TEXTURE_WIDTH = 256;
-constexpr int TEXTURE_HEIGHT = 240;
-
 static std::mutex texture_mutex;
 
 
@@ -86,8 +83,13 @@ static GLuint create_program(const char* vertex_source,
 struct Context {
     GLuint program;
     GLuint vbo;
+
+    uint32_t tex_width, tex_height;
     GLuint texture;
+
     std::vector<uint32_t> texture_buffer;
+    uint32_t buf_tex_width, buf_tex_height;
+
     bool running;
 };
 
@@ -114,8 +116,20 @@ static void setup()
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
     my_context.vbo = vbo;
 
-    my_context.texture_buffer.resize(TEXTURE_WIDTH * TEXTURE_HEIGHT);
+    my_context.tex_width = my_context.tex_height = 0;
+    my_context.buf_tex_width = my_context.buf_tex_height = 0;
+}
 
+static void destroy_texture()
+{
+    if (my_context.texture) {
+        glDeleteTextures(1, &my_context.texture);
+        my_context.texture = 0;
+    }
+}
+
+static void create_texture(uint32_t w, uint32_t h)
+{
     GLuint tex_id;
 
     glGenTextures(1, &tex_id);
@@ -129,42 +143,43 @@ static void setup()
 
     // 传递纹理数据
     glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 GL_RGBA,
-                 TEXTURE_WIDTH,
-                 TEXTURE_HEIGHT,
-                 0,
-                 GL_RGBA,
-                 GL_UNSIGNED_BYTE,
-                 my_context.texture_buffer.data());
+        0,
+        GL_RGBA,
+        w,
+        h,
+        0,
+        GL_RGBA,
+        GL_UNSIGNED_BYTE,
+        my_context.texture_buffer.data());
 
     my_context.texture = tex_id;
+    my_context.tex_width = w;
+    my_context.tex_height = h;
 }
-
-static void cleanup()
-{
-    glDeleteBuffers(1, &my_context.vbo);
-    glDeleteProgram(my_context.program);
-}
-
 
 static void render()
 {
     EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_get_current_context();
     emscripten_webgl_make_context_current(ctx);
 
+    if (my_context.tex_width != my_context.buf_tex_width
+        || my_context.tex_height != my_context.buf_tex_height) {
+        destroy_texture();
+        create_texture(my_context.buf_tex_width, my_context.buf_tex_height);
+    }
+
     {
         std::lock_guard lk(texture_mutex);
         glBindTexture(GL_TEXTURE_2D, my_context.texture);
         glTexSubImage2D(GL_TEXTURE_2D,
-                        0,
-                        0,
-                        0,
-                        TEXTURE_WIDTH,
-                        TEXTURE_HEIGHT,
-                        GL_RGBA,
-                        GL_UNSIGNED_BYTE,
-                        my_context.texture_buffer.data());
+            0,
+            0,
+            0,
+            my_context.tex_width,
+            my_context.tex_height,
+            GL_RGBA,
+            GL_UNSIGNED_BYTE,
+            my_context.texture_buffer.data());
     }
 
     glClear(GL_COLOR_BUFFER_BIT);
@@ -238,14 +253,6 @@ EM_BOOL key_callback(int eventType,
 
 int main()
 {
-    // if (emscripten_is_main_browser_thread()) {
-    //     printf("运行在主线程（PROXY_TO_PTHREAD 未生效）\n");
-    // } else {
-    //     printf("运行在 Worker 线程（PROXY_TO_PTHREAD 已生效）\n");
-    // }
-
-    emscripten_set_canvas_element_size(
-        "#canvas", TEXTURE_WIDTH, TEXTURE_HEIGHT);
     EmscriptenWebGLContextAttributes attrs;
     emscripten_webgl_init_context_attributes(&attrs);
     EMSCRIPTEN_WEBGL_CONTEXT_HANDLE ctx = emscripten_webgl_create_context(
@@ -263,7 +270,6 @@ int main()
     notify_ready();
 
     emscripten_set_main_loop(render, 0, 1);
-    cleanup();
     return 0;
 }
 
@@ -278,16 +284,27 @@ static void notify(int noti, void* param)
             auto frame = renderer_frame->frame;
             auto emulator_HUD = renderer_frame->emulator_HUD;
 
-            if (frame.width == TEXTURE_WIDTH && frame.height == TEXTURE_HEIGHT) {
-                for(int y = 0; y < frame.height; y ++) {
-                    for(int x = 0; x < frame.width; x ++) {
-                        my_context.texture_buffer[y * frame.width + x]
-                            = frame.buffer[y * frame.width + x] | emulator_HUD.buffer[y * frame.width + x];
-                    }
+            if (frame.width != my_context.buf_tex_width
+                || frame.height != my_context.buf_tex_height) {
+                my_context.texture_buffer.resize(frame.width * frame.height);
+                my_context.buf_tex_width = frame.width;
+                my_context.buf_tex_height = frame.height;
+            }
+
+            for (int y = 0; y < frame.height; y++) {
+                for (int x = 0; x < frame.width; x++) {
+                    my_context.texture_buffer[y * frame.width + x]
+                        = frame.buffer[y * frame.width + x];
                 }
             }
-            else {
-                printf("texture size is: %d, %d\n", frame.width, frame.height);
+
+            int hud_offset_y = frame.height - emulator_HUD.height;
+
+            for (int y = 0; y < emulator_HUD.height; y++) {
+                for (int x = 0; x < emulator_HUD.width; x++) {
+                    my_context.texture_buffer[(y + hud_offset_y) * frame.width + x]
+                        |= emulator_HUD.buffer[y * emulator_HUD.width + x];
+                }
             }
         }
     }
@@ -303,6 +320,24 @@ extern "C" void load_NES_file(const char* ROM_path)
         mesen_init();
         mesen_initialize_emu("./", true, false, false);
         mesen_register_notification_callback(notify);
+
+        MesenVideoConfig video_config {
+            .video_filter = MESEN_VIDEO_FILTER_TYPE_HQ_2X,
+            .brightness = 0,
+            .contrast = 0,
+            .hue = 0,
+            .saturation = 0,
+        };
+        mesen_set_video_config(&video_config);
+
+        MesenPreferences preferences {
+            .hud_size = MESEN_HUD_DISPLAY_SIZE_SCALED,
+            .show_fps = false,
+            .show_frame_counter = false,
+            .show_game_timer = false,
+            .show_debug_info = false,
+        };
+        mesen_set_preferences(&preferences);
     });
 
     MesenNesConfig NES_config = {
@@ -334,9 +369,8 @@ extern "C" void load_NES_file(const char* ROM_path)
     }
 
     mesen_set_NES_config(&NES_config);
+
     bool succ = mesen_load_ROM(ROM_path, NULL);
     printf("load ROM succ?: %d\n", succ);
     my_context.running = succ;
 }
-
-

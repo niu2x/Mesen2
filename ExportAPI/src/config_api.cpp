@@ -53,3 +53,14 @@ void mesen_set_video_config(const MesenVideoConfig* video_config)
 
     _emu->GetSettings()->SetVideoConfig(curr_config);
 }
+
+void mesen_set_preferences(const MesenPreferences* preferences)
+{
+    auto p = _emu->GetSettings()->GetPreferences();
+    p.HudSize = (HudDisplaySize)preferences->hud_size;
+    p.ShowFps = preferences->show_fps;
+    p.ShowFrameCounter = preferences->show_frame_counter;
+    p.ShowGameTimer = preferences->show_game_timer;
+    p.ShowDebugInfo = preferences->show_debug_info;
+    SetPreferences(p);
+}

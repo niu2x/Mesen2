@@ -113,6 +113,21 @@ typedef struct MesenVideoConfig {
     double saturation;
 } MesenVideoConfig;
 
+enum MesenHudDisplaySize {
+    MESEN_HUD_DISPLAY_SIZE_FIXED,
+    MESEN_HUD_DISPLAY_SIZE_SCALED,
+};
+
+typedef struct MesenPreferences {
+    MesenHudDisplaySize hud_size;
+
+    bool show_fps;
+    bool show_frame_counter;
+    bool show_game_timer;
+    bool show_debug_info;
+
+} MesenPreferences;
+
 MESEN_API extern const MesenPalette mesen_default_palette;
 
 // /init & release
@@ -156,6 +171,7 @@ MESEN_API void mesen_reset_key_state();
 
 // config API
 MESEN_API void mesen_set_video_config(const MesenVideoConfig* video_config);
+MESEN_API void mesen_set_preferences(const MesenPreferences* preferences);
 
 #ifdef __cplusplus
 }
