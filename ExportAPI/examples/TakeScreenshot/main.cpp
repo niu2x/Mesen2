@@ -34,7 +34,7 @@ int main(int argc, char* argv[])
     mesen_set_video_config(&video_config);
 
     MesenPreferences preferences {
-        .hud_size = MESEN_HUD_DISPLAY_SIZE_SCALED,
+        .HUD_size = MESEN_HUD_DISPLAY_SIZE_SCALED,
         .show_fps = false,
         .show_frame_counter = false,
         .show_game_timer = false,

@@ -119,7 +119,7 @@ enum MesenHudDisplaySize {
 };
 
 typedef struct MesenPreferences {
-    MesenHudDisplaySize hud_size;
+    MesenHudDisplaySize HUD_size;
 
     bool show_fps;
     bool show_frame_counter;
@@ -127,6 +127,16 @@ typedef struct MesenPreferences {
     bool show_debug_info;
 
 } MesenPreferences;
+
+enum MesenShortcut {
+    MESEN_SHORTCUT_EXEC_RESET = 35,
+};
+
+typedef struct MesenExecuteShortcutParams {
+    MesenShortcut shortcut;
+    uint32_t param;
+    void* param_ptr;
+} MesenExecuteShortcutParams;
 
 MESEN_API extern const MesenPalette mesen_default_palette;
 
@@ -172,6 +182,8 @@ MESEN_API void mesen_reset_key_state();
 // config API
 MESEN_API void mesen_set_video_config(const MesenVideoConfig* video_config);
 MESEN_API void mesen_set_preferences(const MesenPreferences* preferences);
+
+MESEN_API void mesen_execute_shortcut(const MesenExecuteShortcutParams* exec_params);
 
 #ifdef __cplusplus
 }

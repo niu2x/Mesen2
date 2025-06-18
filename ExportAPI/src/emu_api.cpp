@@ -82,3 +82,12 @@ void mesen_display_message(const char* title, const char* msg, const char* param
 {
     MessageManager::DisplayMessage(title, msg, param1, param2);
 }
+
+void mesen_execute_shortcut(const MesenExecuteShortcutParams* exec_params)
+{
+    ExecuteShortcut({
+        .Shortcut = (EmulatorShortcut)exec_params->shortcut,
+        .Param = exec_params->param,
+        .ParamPtr = exec_params->param_ptr,
+    });
+}
