@@ -6,13 +6,10 @@ import {
   dirname
 } from 'path';
 import fs from 'fs';
-import autoprefixer from 'autoprefixer'
 
+import autoprefixer from 'autoprefixer'
 import HtmlWebpackPlugin from 'html-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin';
-import {
-  WebpackAssetsManifest
-} from 'webpack-assets-manifest'
 
 const __filename = fileURLToPath(
   import.meta.url);
@@ -60,6 +57,7 @@ export default {
         }
       }]
     }]
+
   },
 
   plugins: [
@@ -76,25 +74,18 @@ export default {
       }]
     }),
 
-    new WebpackAssetsManifest({
-      output: 'manifest.json', // 生成的映射表文件名
-      publicPath: '/', // 资源公共路径
-      customize(key, entry) { // 自定义条目格式（可选）
-        return {
-          key: entry.key,
-          value: entry.value,
-          size: entry.value.length
-        };
-      }
-    }),
     new HtmlWebpackPlugin({
       template: 'src/index.html',
       filename: 'index.html',
       templateParameters: (compilation, assets, assetTags) => {
-        const manifestPath = path.resolve(__dirname, 'dist/manifest.json');
-        const manifest = fs.existsSync(manifestPath) ?
-          JSON.parse(fs.readFileSync(manifestPath, 'utf8')) :
-          {};
+        const manifest = compilation.getStats().toJson().assets
+          .reduce((acc, asset) => {
+            let key = asset.info.sourceFilename
+            acc[key] = asset.name;
+            return acc;
+          }, {});
+
+        console.log(JSON.stringify(manifest));
         return {
           compilation,
           webpackConfig: compilation.options,

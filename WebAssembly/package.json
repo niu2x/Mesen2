@@ -20,7 +20,6 @@
     "sass": "^1.89.2",
     "sass-loader": "^16.0.5",
     "style-loader": "^4.0.0",
-    "webpack-assets-manifest": "^6.2.1",
     "webpack-cli": "^6.0.1"
   }
 }

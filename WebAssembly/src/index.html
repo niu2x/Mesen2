@@ -92,12 +92,12 @@
   <script>
     globalThis.Module = {
       locateFile: (path) => {
-        if (path.endsWith('.wasm')) return "<%= htmlWebpackPlugin.manifest['WebNative.wasm'] %>";
-        if (path.endsWith('.worker.js')) return "<%= htmlWebpackPlugin.manifest['WebNative.worker.js'] %>";
+        if (path.endsWith('.wasm')) return "<%= htmlWebpackPlugin.manifest['src/WebNative.wasm'] %>";
+        if (path.endsWith('.worker.js')) return "<%= htmlWebpackPlugin.manifest['src/WebNative.worker.js'] %>";
         return path;
       }
     };
   </script>
-  <script src="<%= htmlWebpackPlugin.manifest['WebNative.js'] %>"> </script>
+  <script src="<%= htmlWebpackPlugin.manifest['src/WebNative.js'] %>"> </script>
 </body>
 </html>
