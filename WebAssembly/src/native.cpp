@@ -331,7 +331,7 @@ extern "C" void load_NES_file(const char* ROM_path)
         mesen_set_video_config(&video_config);
 
         MesenPreferences preferences {
-            .hud_size = MESEN_HUD_DISPLAY_SIZE_SCALED,
+            .HUD_size = MESEN_HUD_DISPLAY_SIZE_SCALED,
             .show_fps = false,
             .show_frame_counter = false,
             .show_game_timer = false,
@@ -373,4 +373,12 @@ extern "C" void load_NES_file(const char* ROM_path)
     bool succ = mesen_load_ROM(ROM_path, NULL);
     printf("load ROM succ?: %d\n", succ);
     my_context.running = succ;
+}
+
+EMSCRIPTEN_KEEPALIVE 
+extern "C" void reset_emulator() {
+    MesenExecuteShortcutParams exec_params {
+        .shortcut = MESEN_SHORTCUT_EXEC_RESET,
+    };
+    mesen_execute_shortcut(&exec_params);
 }

@@ -52,9 +52,9 @@ globalThis.nativeOnReady = () => {
 document.addEventListener('DOMContentLoaded', function() {
     // Button event handlers
     document.getElementById('load-rom').addEventListener('click', function() {
-        if(!globalThis.nativeReady)
+        if (!globalThis.nativeReady)
             return;
-        
+
         document.getElementById('rom-file').click();
     });
 
@@ -95,6 +95,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('reset-btn').addEventListener('click', function() {
         document.getElementById('game-status').textContent = 'Reset';
-        // Reset emulator
+        globalThis.Module.ccall(
+            'reset_emulator',
+            'void',
+            [],
+            []
+        );
     });
 });
