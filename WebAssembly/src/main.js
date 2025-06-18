@@ -80,7 +80,6 @@ document.addEventListener('DOMContentLoaded', function() {
                     ['string'],
                     [`/${file.name}`]
                 );
-
             };
 
             reader.onerror = function() {
@@ -88,21 +87,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.error('Error reading file');
             };
 
-            // Read the file as ArrayBuffer
             reader.readAsArrayBuffer(file);
 
         }
     });
 
-    document.getElementById('play-btn').addEventListener('click', function() {
-        document.getElementById('game-status').textContent = 'Playing';
-        // Start emulation
-    });
-
-    document.getElementById('pause-btn').addEventListener('click', function() {
-        document.getElementById('game-status').textContent = 'Paused';
-        // Pause emulation
-    });
 
     document.getElementById('reset-btn').addEventListener('click', function() {
         document.getElementById('game-status').textContent = 'Reset';

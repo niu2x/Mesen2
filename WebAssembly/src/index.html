@@ -14,7 +14,6 @@
     }
     
     .emulator-container {
-      max-width: 800px;
       margin: 0 auto;
       padding: 20px;
     }
@@ -36,7 +35,7 @@
 
     <div class="emulator-container">
         <!-- Main emulator canvas -->
-      <canvas id="canvas" width="640" height="480"></canvas>
+      <canvas id="canvas" width="512" height="480"></canvas>
         
         <!-- Controls -->
       <div class="row mt-3">
@@ -50,12 +49,6 @@
         </div>
         <div class="col-md-6">
           <div class="btn-group w-100" role="group">
-            <button id="play-btn" class="btn btn-success">
-                <i class="bi bi-play-fill"></i> Play
-            </button>
-            <button id="pause-btn" class="btn btn-warning">
-                <i class="bi bi-pause-fill"></i> Pause
-            </button>
             <button id="reset-btn" class="btn btn-danger">
                 <i class="bi bi-arrow-counterclockwise"></i> Reset
             </button>
