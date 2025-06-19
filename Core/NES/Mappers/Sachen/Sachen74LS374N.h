@@ -38,7 +38,7 @@ protected:
 		if(_romInfo.MapperID == 150) {
 			chrPage = ((_regs[4] & 0x01) << 2) | (_regs[6] & 0x03);
 		} else {
-			chrPage = (_regs[2] & 0x01) | ((_regs[4] & 0x01) << 1) | ((_regs[6] & 0x03) << 2);
+			chrPage = ((_regs[2] & 1) << 3) | ((_regs[6] & 3) << 1) | (_regs[4] & 1);
 		}
 		SelectChrPage(0, chrPage);
 		SelectPrgPage(0, _regs[5] & 0x03);
