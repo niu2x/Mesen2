@@ -84,6 +84,7 @@ target_sources(MesenRT PRIVATE
     ExportAPI/src/emu_api.cpp
     ExportAPI/src/config_api.cpp
     ExportAPI/src/input_api.cpp
+    ExportAPI/src/static_check.cpp
 )
 
 target_include_directories(MesenRT PUBLIC 

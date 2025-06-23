@@ -10,39 +10,8 @@ extern "C" {
 
 // Should keep consistent with ControllerType (Core/Shared/SettingTypes.h)
 enum MesenControllerType {
-    MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 5,
+    MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 6,
 };
-
-typedef struct MesenKeyMapping {
-    uint16_t A;
-    uint16_t B;
-    uint16_t up;
-    uint16_t down;
-    uint16_t left;
-    uint16_t right;
-    uint16_t start;
-    uint16_t select;
-    uint16_t turbo_A;
-    uint16_t turbo_B;
-    // range: 0-3
-    uint32_t turbo_speed;
-} MesenKeyMapping;
-
-typedef struct MesenControllerConfig
-{
-    MesenKeyMapping key_mapping;
-    int type;
-} MesenControllerConfig;
-
-typedef uint32_t MesenPalette[512];
-
-typedef struct MesenNesConfig {
-    MesenPalette user_palette;
-    MesenControllerConfig port_1;
-    MesenControllerConfig port_2;
-} MesenNesConfig;
-
-typedef void (*NotificationCallback)(int event_type, void* param);
 
 // Should keep consistent with ConsoleNotificationType (Core/Shared/SettingTypes.h)
 enum MesenNotificationType {
@@ -61,7 +30,7 @@ enum MesenNotificationType {
     MESEN_NOTIFICATION_TYPE_EMULATION_STOPPED,
     MESEN_NOTIFICATION_TYPE_BEFORE_EMULATION_STOP,
     MESEN_NOTIFICATION_TYPE_VIEWER_REFRESH,
-    MESEN_NOTIFICATION_TYPE_EVENT_VIEWERREFRESH,
+    MESEN_NOTIFICATION_TYPE_EVENT_VIEWER_REFRESH,
     MESEN_NOTIFICATION_TYPE_MISSING_FIRMWARE,
     MESEN_NOTIFICATION_TYPE_SUFAMI_TURBO_FILE_PROMPT,
     MESEN_NOTIFICATION_TYPE_BEFORE_GAME_UNLOAD,
@@ -71,20 +40,6 @@ enum MesenNotificationType {
     MESEN_NOTIFICATION_TYPE_REQUEST_CONFIG_CHANGE,
     MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER,
 };
-
-typedef struct MesenSoftwareRendererSurface
-{
-    uint32_t* buffer;
-    uint32_t width;
-    uint32_t height = 0;
-    bool is_dirty;
-} MesenSoftwareRendererSurface;
-
-typedef struct MesenSoftwareRendererFrame {
-    MesenSoftwareRendererSurface frame;
-    MesenSoftwareRendererSurface emulator_HUD;
-    MesenSoftwareRendererSurface script_HUD;
-} MesenSoftwareRendererFrame;
 
 // Should keep consistent with same as VideoFilterType (Core/Shared/SettingTypes.h)
 enum MesenVideoFilterType {
@@ -105,6 +60,58 @@ enum MesenVideoFilterType {
     MESEN_VIDEO_FILTER_TYPE_SCALE_4X,
 };
 
+enum MesenHudDisplaySize {
+    MESEN_HUD_DISPLAY_SIZE_FIXED,
+    MESEN_HUD_DISPLAY_SIZE_SCALED,
+};
+
+enum MesenShortcut {
+    MESEN_SHORTCUT_EXEC_RESET = 35,
+};
+
+typedef struct MesenKeyMapping {
+    uint16_t A;
+    uint16_t B;
+    uint16_t up;
+    uint16_t down;
+    uint16_t left;
+    uint16_t right;
+    uint16_t start;
+    uint16_t select;
+    uint16_t turbo_A;
+    uint16_t turbo_B;
+    // range: 0-3
+    uint32_t turbo_speed;
+} MesenKeyMapping;
+
+typedef struct MesenControllerConfig {
+    MesenKeyMapping key_mapping;
+    int type;
+} MesenControllerConfig;
+
+typedef uint32_t MesenPalette[512];
+
+typedef struct MesenNesConfig {
+    MesenPalette user_palette;
+    MesenControllerConfig port_1;
+    MesenControllerConfig port_2;
+} MesenNesConfig;
+
+typedef void (*NotificationCallback)(int event_type, void* param);
+
+typedef struct MesenSoftwareRendererSurface {
+    uint32_t* buffer;
+    uint32_t width;
+    uint32_t height = 0;
+    bool is_dirty;
+} MesenSoftwareRendererSurface;
+
+typedef struct MesenSoftwareRendererFrame {
+    MesenSoftwareRendererSurface frame;
+    MesenSoftwareRendererSurface emulator_HUD;
+    MesenSoftwareRendererSurface script_HUD;
+} MesenSoftwareRendererFrame;
+
 typedef struct MesenVideoConfig {
     MesenVideoFilterType video_filter;
     double brightness;
@@ -112,11 +119,6 @@ typedef struct MesenVideoConfig {
     double hue;
     double saturation;
 } MesenVideoConfig;
-
-enum MesenHudDisplaySize {
-    MESEN_HUD_DISPLAY_SIZE_FIXED,
-    MESEN_HUD_DISPLAY_SIZE_SCALED,
-};
 
 typedef struct MesenPreferences {
     MesenHudDisplaySize HUD_size;
@@ -127,10 +129,6 @@ typedef struct MesenPreferences {
     bool show_debug_info;
 
 } MesenPreferences;
-
-enum MesenShortcut {
-    MESEN_SHORTCUT_EXEC_RESET = 35,
-};
 
 typedef struct MesenExecuteShortcutParams {
     MesenShortcut shortcut;

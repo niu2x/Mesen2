@@ -2,5 +2,14 @@
 Language: Cpp 
 BasedOnStyle: Webkit
 
+ColumnLimit: '100'
+IndentCaseLabels: true
 
+AlignAfterOpenBracket: Align                        # 对齐开括号后的参数
+AllowAllParametersOfDeclarationOnNextLine: false    # 不允许所有参数都在下一行（强制换行时对齐）
+BinPackArguments: false                             # 禁止将参数打包到一行（强制对齐）
+BinPackParameters: false                            # 同上，针对函数声明
+BreakBeforeBraces: Custom                           # 自定义大括号换行（可选）
+BraceWrapping:
+  AfterFunction: false                              # 函数后不换行（可选）
 ...
