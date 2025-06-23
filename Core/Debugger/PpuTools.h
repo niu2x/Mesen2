@@ -2,10 +2,12 @@
 #include "pch.h"
 #include "Debugger/DebugTypes.h"
 #include "Shared/NotificationManager.h"
-#include "Shared/Emulator.h"
 #include "Shared/ColorUtilities.h"
+#include "Shared/SettingTypes.h"
 
 class Debugger;
+class Emulator;
+class BaseState;
 
 struct ViewerRefreshConfig
 {

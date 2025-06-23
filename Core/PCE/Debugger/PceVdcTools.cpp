@@ -7,6 +7,7 @@
 #include "Debugger/MemoryDumper.h"
 #include "Shared/EmuSettings.h"
 #include "Shared/SettingTypes.h"
+#include "Shared/Emulator.h"
 
 PceVdcTools::PceVdcTools(Debugger* debugger, Emulator *emu, PceConsole* console) : PpuTools(debugger, emu)
 {

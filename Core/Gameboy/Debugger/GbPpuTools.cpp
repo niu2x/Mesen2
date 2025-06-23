@@ -5,6 +5,7 @@
 #include "Gameboy/GbTypes.h"
 #include "Gameboy/GbConstants.h"
 #include "Shared/ColorUtilities.h"
+#include "Debugger/Debugger.h"
 
 GbPpuTools::GbPpuTools(Debugger* debugger, Emulator *emu) : PpuTools(debugger, emu)
 {

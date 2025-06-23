@@ -3,6 +3,7 @@
 #include "Debugger/CdlManager.h"
 #include "Debugger/DebugTypes.h"
 #include "Debugger/DebugBreakHelper.h"
+#include "Shared/Emulator.h"
 #include "Shared/SettingTypes.h"
 
 PpuTools::PpuTools(Debugger* debugger, Emulator *emu)

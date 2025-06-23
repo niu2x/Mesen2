@@ -14,6 +14,10 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <assert.h>
+
+#if defined(__cplusplus)
+
 #include <memory>
 #include <optional>
 
@@ -32,9 +36,10 @@
 #include <thread>
 #include <deque>
 #include <algorithm>
-#include <assert.h>
-
 #include "Utilities/UTF8Util.h"
+
+#endif
+
 
 #ifdef _MSC_VER
 	#define __noinline __declspec(noinline)
@@ -52,6 +57,7 @@
 	#define __noinline
 #endif
 
+#if defined(__cplusplus)
 using std::vector;
 using std::unordered_map;
 using std::unordered_set;
@@ -72,3 +78,4 @@ using std::atomic;
 using std::thread;
 using std::deque;
 using std::optional;
+#endif

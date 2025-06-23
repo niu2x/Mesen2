@@ -5,6 +5,7 @@
 #include "Shared/SettingTypes.h"
 #include "SNES/SnesPpu.h"
 #include "Shared/ColorUtilities.h"
+#include "Debugger/Debugger.h"
 #include "Shared/MessageManager.h"
 
 static constexpr uint8_t layerBpp[8][4] = {

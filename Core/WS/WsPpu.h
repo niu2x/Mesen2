@@ -5,7 +5,6 @@
 #include "Shared/SettingTypes.h"
 #include "Utilities/ISerializable.h"
 
-class Emulator;
 class WsTimer;
 class WsConsole;
 

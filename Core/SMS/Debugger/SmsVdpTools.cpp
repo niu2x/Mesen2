@@ -6,6 +6,7 @@
 #include "Debugger/DebugTypes.h"
 #include "Debugger/MemoryDumper.h"
 #include "Shared/SettingTypes.h"
+#include "Debugger/Debugger.h"
 
 SmsVdpTools::SmsVdpTools(Debugger* debugger, Emulator *emu, SmsConsole* console) : PpuTools(debugger, emu)
 {

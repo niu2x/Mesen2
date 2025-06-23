@@ -5,6 +5,7 @@
 #include "Shared/SettingTypes.h"
 #include "GBA/GbaTypes.h"
 #include "Shared/ColorUtilities.h"
+#include "Debugger/Debugger.h"
 
 GbaPpuTools::GbaPpuTools(Debugger* debugger, Emulator *emu) : PpuTools(debugger, emu)
 {

@@ -107,6 +107,6 @@ void SoftwareKeyManager::SetDisabled(bool disabled)
     _disableAllKeys = disabled;
 }
 
-void SoftwareKeyManager::SetForceFeedback(uint16_t magnitude)
+void SoftwareKeyManager::SetForceFeedback(uint16_t magnitude, uint16_t magnitudeLeft)
 {
 }

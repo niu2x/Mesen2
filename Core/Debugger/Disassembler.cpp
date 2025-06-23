@@ -21,6 +21,7 @@
 #include "PCE/PceTypes.h"
 #include "SMS/SmsTypes.h"
 #include "WS/WsTypes.h"
+#include "Shared/Emulator.h"
 #include "WS/Debugger/WsDisUtils.h"
 #include "Shared/EmuSettings.h"
 #include "Utilities/FastString.h"
