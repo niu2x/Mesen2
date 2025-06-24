@@ -70,6 +70,31 @@
 
 			</LinearLayout>
 
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="horizontal"
+				>
+				<Button
+					android:layout_width="match_parent"
+					android:id="@+id/select_btn"
+					android:text="Select"
+					android:layout_margin="4dp"
+					android:layout_weight="1"
+					android:layout_gravity="center"
+					android:layout_height="wrap_content"/>
+
+				<Button
+					android:layout_width="match_parent"
+					android:id="@+id/start_btn"
+					android:text="Start"
+					android:layout_weight="1"
+					android:layout_gravity="center"
+					android:layout_margin="4dp"
+					android:layout_height="wrap_content"/>
+
+			</LinearLayout>
+
 			<com.example.mesen.demo.NesGamepadView
 				android:id="@+id/nesGamepad"
 				android:layout_width="match_parent"

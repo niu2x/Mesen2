@@ -2,6 +2,7 @@ package com.example.mesen.demo;
 
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.Button;
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 	private Button loadSaveButton;
 	private Button resetButton;
 
+	private Button selectButton;
+	private Button startButton;
+
 	private FilePicker filePicker;
 	private CopyExternalFileToLocalFilesDir copyExternalFileToLocalFilesDir;
 	private NesGamepadView nesGamepadView;
@@ -46,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 		loadSaveButton = binding.loadSave;
 		resetButton = binding.reset;
 		nesGamepadView = binding.nesGamepad;
+		selectButton = binding.selectBtn;
+		startButton = binding.startBtn;
 
 		registerClickListeners();
 
@@ -66,6 +72,24 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 		loadSaveButton.setOnClickListener(view -> {
 		});
 		resetButton.setOnClickListener(view -> {
+		});
+		selectButton.setOnClickListener(view->{
+			MesenAPI.setKeyState(NesGamepadView.KEY_SELECT, true);
+			new Handler(getMainLooper()).postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					MesenAPI.setKeyState(NesGamepadView.KEY_SELECT, false);
+				}
+			}, 100);
+		});
+		startButton.setOnClickListener(view->{
+			MesenAPI.setKeyState(NesGamepadView.KEY_START, true);
+			new Handler(getMainLooper()).postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					MesenAPI.setKeyState(NesGamepadView.KEY_START, false);
+				}
+			}, 100);
 		});
 		nesGamepadView.setNesGamepadStateCallback(this);
 	}

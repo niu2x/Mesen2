@@ -13,17 +13,17 @@ import android.view.View;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 public class NesGamepadView extends View {
-	public final int KEY_A = 0;
-	public final int KEY_B = 1;
-	public final int KEY_TURBO_A = 2;
-	public final int KEY_TURBO_B = 3;
-	public final int KEY_LEFT = 4;
-	public final int KEY_RIGHT = 5;
-	public final int KEY_UP = 6;
-	public final int KEY_DOWN = 7;
-	public final int KEY_SELECT = 8;
-	public final int KEY_START = 9;
-	public final int KEY_DIRECTION = 10;
+	public static final int KEY_A = 0;
+	public static final int KEY_B = 1;
+	public static final int KEY_TURBO_A = 2;
+	public static final int KEY_TURBO_B = 3;
+	public static final int KEY_LEFT = 4;
+	public static final int KEY_RIGHT = 5;
+	public static final int KEY_UP = 6;
+	public static final int KEY_DOWN = 7;
+	public static final int KEY_SELECT = 8;
+	public static final int KEY_START = 9;
+	public static final int KEY_DIRECTION = 10;
 
 
 	public class GamepadState {
@@ -257,10 +257,16 @@ public class NesGamepadView extends View {
 		}
 
 		if(diretionButtonTouchingState.pointerId == currentPointerId) {
-			if(diretionButtonTouchingState.targetPos.distance(new Vector2D(x, y)) > diretionButtonTouchingState.radius) {
+			Vector2D thisTouchPos = new Vector2D(x, y);
+			if(diretionButtonTouchingState.targetPos.distance(thisTouchPos) > diretionButtonTouchingState.radius) {
+				diretionButtonTouchingState.touchingPos = thisTouchPos
+					.subtract(diretionButtonTouchingState.targetPos)
+					.normalize()
+					.scalarMultiply(diretionButtonTouchingState.radius)
+					.add(diretionButtonTouchingState.targetPos);
 			}
 			else {
-				diretionButtonTouchingState.touchingPos = new Vector2D(x, y);
+				diretionButtonTouchingState.touchingPos = thisTouchPos;
 			}
 			updateDirectionKeyStates(x, y);
 			fireGamepadState();
