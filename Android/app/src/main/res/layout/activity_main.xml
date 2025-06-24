@@ -10,18 +10,69 @@
 		android:layout_width="match_parent"
 		android:orientation="vertical"
 		android:layout_height="match_parent">
-		<TextView
-			android:id="@+id/sample_text"
+
+		<LinearLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:textAlignment="center"
-			android:text="Hello World!"/>
+			android:orientation="vertical">
+			<TextView
+				android:id="@+id/sample_text"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:textAlignment="center"
+				android:textSize="24dp"
+				android:text="Childhood Game Emulator"/>
 
-		<SurfaceView
-			android:layout_width="256dp"
-			android:layout_height="240dp"
-			android:layout_gravity="center"
-			android:id="@+id/surface"/>
+			<SurfaceView
+				android:layout_width="256dp"
+				android:layout_height="240dp"
+				android:layout_gravity="center"
+				android:id="@+id/surface"/>
+		</LinearLayout>
+
+		<LinearLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+
+			<LinearLayout
+				android:layout_height="wrap_content"
+				android:layout_width="match_parent"
+				android:orientation="horizontal"
+				>
+
+				<Button
+					android:layout_width="match_parent"
+					android:id="@+id/load_rom"
+					android:text="Load ROM"
+					android:layout_weight="1"
+					android:layout_margin="4dp"
+					android:layout_gravity="center"
+					android:layout_height="wrap_content"/>
+
+				<Button
+					android:layout_width="match_parent"
+					android:id="@+id/load_save"
+					android:text="Load Save"
+					android:layout_margin="4dp"
+					android:layout_weight="1"
+					android:layout_gravity="center"
+					android:layout_height="wrap_content"/>
+
+				<Button
+					android:layout_width="match_parent"
+					android:id="@+id/reset"
+					android:text="Reset"
+					android:layout_weight="1"
+					android:layout_gravity="center"
+					android:layout_margin="4dp"
+					android:layout_height="wrap_content"/>
+
+			</LinearLayout>
+
+		</LinearLayout>
+
+
 
 	</LinearLayout>
 
