@@ -9,4 +9,5 @@ public class MesenAPI {
 	public static native void initializeEmu(String dir, boolean noAudio, boolean noVideo, boolean noInput);
 	public static native void registerNotificationCallback(NotificationCallback callback);
 	public static native boolean loadROM(String romFile, String patchFile);
+	public static native void setKeyState(int keyCode, boolean state);
 }

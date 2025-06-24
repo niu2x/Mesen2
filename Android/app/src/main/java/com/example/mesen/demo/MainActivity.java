@@ -95,5 +95,8 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 
 	@Override
 	public void notifyNesGamepadStateChange(NesGamepadView.GamepadState gamepadState) {
+		for(int i = 0; i < 10; i ++) {
+			MesenAPI.setKeyState(i, gamepadState.keyStates[i]);
+		}
 	}
 }
