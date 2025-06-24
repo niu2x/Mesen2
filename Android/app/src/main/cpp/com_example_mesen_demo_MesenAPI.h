@@ -39,6 +39,14 @@ JNIEXPORT void JNICALL Java_com_example_mesen_demo_MesenAPI_registerNotification
 JNIEXPORT jboolean JNICALL Java_com_example_mesen_demo_MesenAPI_loadROM
   (JNIEnv *, jclass, jstring, jstring);
 
+/*
+ * Class:     com_example_mesen_demo_MesenAPI
+ * Method:    setKeyState
+ * Signature: (IZ)V
+ */
+JNIEXPORT void JNICALL Java_com_example_mesen_demo_MesenAPI_setKeyState
+  (JNIEnv *, jclass, jint, jboolean);
+
 #ifdef __cplusplus
 }
 #endif
