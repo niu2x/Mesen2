@@ -12,10 +12,11 @@ import com.example.mesen.demo.utils.Tip;
 import com.onehilltech.promises.Promise;
 
 import android.content.Intent;
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MesenAPI.NotificationCallback {
 	// Used to load the 'demo' library on application startup.
 	static {
-	// System.loadLibrary("demo");
+		System.loadLibrary("MesenRT");
+		System.loadLibrary("MesenAndroid");
 	}
 
 	private static final String TAG = MainActivity.class.getSimpleName();
@@ -48,6 +49,14 @@ public class MainActivity extends AppCompatActivity {
 
 		filePicker = new FilePicker(this);
 		copyExternalFileToLocalFilesDir = new CopyExternalFileToLocalFilesDir(this, filePicker);
+
+		initMesen();
+	}
+
+	void initMesen() {
+		MesenAPI.init();
+		MesenAPI.initializeEmu(getFilesDir().getAbsolutePath(), true, false, false);
+		MesenAPI.registerNotificationCallback(this);
 	}
 
 	void registerClickListeners(){
@@ -60,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
 	void loadRom() {
 	 	this.copyExternalFileToLocalFilesDir.pickFile().then((value)->{
-			Tip.showTip("bytes: " + value);
+			MesenAPI.loadROM(value, null);
 			return Promise.resolve(Void.class);
 
 		})._catch((err)->{
@@ -74,5 +83,10 @@ public class MainActivity extends AppCompatActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		filePicker.handleActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	public void notifyRefreshSoftwareRenderer(int[] buffer, int width, int height) {
+		surfaceViewRenderer.updateFrameBuffer(buffer, width, height);
 	}
 }
