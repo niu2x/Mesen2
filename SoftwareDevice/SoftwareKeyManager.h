@@ -14,7 +14,7 @@ private:
     Emulator* _emu;
 
     vector<KeyDefinition> _keyDefinitions;
-    bool _keyState[0x205];
+    bool _keyState[0x10000];
     std::unordered_map<uint16_t, string> _keyNames;
     std::unordered_map<string, uint16_t> _keyCodes;
 

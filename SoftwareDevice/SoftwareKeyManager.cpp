@@ -36,10 +36,7 @@ bool SoftwareKeyManager::IsKeyPressed(uint16_t key)
         return false;
     }
 
-    if(key < 0x205) {
-        return _keyState[key] != 0;
-    }
-    return false;
+    return _keyState[key] != 0;
 }
 
 optional<int16_t> SoftwareKeyManager::GetAxisPosition(uint16_t key)
@@ -55,7 +52,7 @@ bool SoftwareKeyManager::IsMouseButtonPressed(MouseButton button)
 vector<uint16_t> SoftwareKeyManager::GetPressedKeys()
 {
     vector<uint16_t> pressedKeys;
-    for(int i = 0; i < 0x205; i++) {
+    for(int i = 0; i < 0x10000; i++) {
         if(_keyState[i]) {
             pressedKeys.push_back(i);
         }
@@ -90,7 +87,7 @@ void SoftwareKeyManager::UpdateDevices()
 
 bool SoftwareKeyManager::SetKeyState(uint16_t scanCode, bool state)
 {
-    if(scanCode < 0x205 && _keyState[scanCode] != state) {
+    if(_keyState[scanCode] != state) {
         _keyState[scanCode] = state;
         return true;
     }
