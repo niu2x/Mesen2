@@ -39,26 +39,23 @@ JNIEXPORT void JNICALL Java_com_example_mesen_demo_MesenAPI_initializeEmu
     // 用完之后，必须释放！
     env->ReleaseStringUTFChars(home_dir, c_str);
 
-
     MesenNesConfig NES_config = {
         .user_palette = {},
         .port_1 = {
             .key_mapping = {
-                .A = 'J',
-                .B = 'K',
+                .A = 0,
+                .B = 1,
+                .up = 6,
+                .down = 7,
+                .left = 4,
+                .right = 5,
 
-                .up = 'W',
-                .down = 'S',
-                .left = 'A',
-                .right = 'D',
+                .start = 9,
+                .select = 8,
 
-                .start = 'M',
-                .select = 'N',
-
-                .turbo_A = 'U',
-                .turbo_B = 'I',
-
-                .turbo_speed = 0,
+                .turbo_A = 2,
+                .turbo_B = 3,
+                .turbo_speed = 2,
             },
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
         },
@@ -153,5 +150,11 @@ JNIEXPORT jboolean JNICALL Java_com_example_mesen_demo_MesenAPI_loadROM
     env->ReleaseStringUTFChars(file, file_str);
 
     return succ;
+}
 
-  }
+JNIEXPORT void JNICALL Java_com_example_mesen_demo_MesenAPI_setKeyState(JNIEnv*,
+                                                                        jclass,
+                                                                        jint key,
+                                                                        jboolean state) {
+    mesen_set_key_state(key, state);
+}
