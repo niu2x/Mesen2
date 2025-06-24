@@ -11,6 +11,8 @@ build-Android:
 	cmake --install ../build/$(directory) --prefix ../dist/$(directory)
 
 
+	mkdir -p app/src/main/jniLibs/arm64-v8a;
+	
 	cmake -S app/src/main/cpp -B ../build/Android/$(directory) \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DANDROID_ABI=arm64-v8a \
