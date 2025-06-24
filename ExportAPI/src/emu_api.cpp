@@ -35,17 +35,6 @@ bool mesen_load_ROM(const char* file, const char* patch_file)
     return LoadRom((char*)file, (char*)patch_file);
 }
 
-void mesen_dump_ROM_info()
-{
-    InteropRomInfo info;
-    GetRomInfo(info);
-    std::cout << "ROM Info: " << std::endl;
-    std::cout << "    " << "ROM Format: " << info.Format << std::endl;
-    std::cout << "    " << "Console: " << info.Console << std::endl;
-    for (uint32_t i = 0; i < info.CpuTypeCount; i++)
-        std::cout << "    " << "CpuType: " << info.CpuTypes[i] << std::endl;
-}
-
 bool mesen_is_running() { return IsRunning(); }
 bool mesen_is_paused() { return IsPaused(); }
 

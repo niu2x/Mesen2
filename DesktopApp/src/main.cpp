@@ -1,127 +1,51 @@
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
-#include "menu.h"
-#include <GLFW/glfw3.h>
-#include <Mesen/Mesen.h>
-#include <filesystem>
-#include <iostream>
+#include <QAction>
+#include <QApplication>
+#include <QLabel>
+#include <QMainWindow>
+#include <QMenuBar>
+#include <QMessageBox>
+#include <QSplitter>
+#include <QStatusBar>
 
 int main(int argc, char* argv[]) {
+    QApplication app(argc, argv);
+    
+    QMainWindow main_window;
+    QMenuBar *menu_bar = main_window.menuBar();
 
-    std::filesystem::path exe_path = argv[0];
-    auto ext_dir = exe_path.parent_path();
+    QMenu *file_menu = menu_bar->addMenu("File");
 
-    // 初始化 GLFW
-    if (!glfwInit()) {
-        std::cerr << "Failed to initialize GLFW" << std::endl;
-        return -1;
-    }
+    QAction *exit_action = new QAction("Exit", &main_window);
+    file_menu->addAction(exit_action);
+    QObject::connect(exit_action, &QAction::triggered, &app, &QApplication::quit);
 
-    // 配置 GLFW
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    QMenu* help_menu = menu_bar->addMenu("Help");
+    QAction* about_action = new QAction("About", &main_window);
+    help_menu->addAction(about_action);
+    QObject::connect(about_action, &QAction::triggered, []() {
+        QMessageBox messageBox;
+        messageBox.setText("这软件是完全免费~");
+        messageBox.exec();
+    });
 
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
+    auto label_1 = new QLabel("1");
+    auto label_2 = new QLabel("2");
 
-    // 创建窗口
-    GLFWwindow* window = glfwCreateWindow(800, 600, "GLFW Example", NULL, NULL);
-    if (!window) {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
+    auto central_widget = new QWidget;
+    QSplitter* splitter = new QSplitter(Qt::Vertical, central_widget);
+    splitter->addWidget(label_1);
+    splitter->addWidget(label_2);
 
-    // 设置当前上下文
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(1); // Enable vsync
+    label_1->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    label_2->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    splitter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-    // Create window with graphics context
-    float main_scale = ImGui_ImplGlfw_GetContentScaleForMonitor(
-        glfwGetPrimaryMonitor()); // Valid on GLFW 3.3+ only
+    main_window.setCentralWidget(central_widget);
 
-    if (window == nullptr)
-        return 1;
+    auto status_bar = main_window.statusBar();
+    status_bar->showMessage("launch success.");
 
-    // Setup Dear ImGui context
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO();
-    (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad; // Enable Gamepad Controls
+    main_window.show();
 
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    // ImGui::StyleColorsLight();
-
-    // Setup scaling
-    ImGuiStyle& style = ImGui::GetStyle();
-    style.ScaleAllSizes(main_scale);
-    style.FontScaleDpi = main_scale;
-
-    // 清除现有字体
-    io.Fonts->Clear();
-
-    auto font_path = ext_dir / "NotoSansSC-Regular.ttf";
-    // 加载指定大小的字体
-    ImFont* font = io.Fonts->AddFontFromFileTTF(font_path.c_str(), // 字体文件路径
-                                                24.0f, // 字体大小(像素)
-                                                NULL, // 字体配置(可选)
-                                                io.Fonts->GetGlyphRangesDefault()); // 字符范围
-
-    // 重要：重建字体纹理
-    // io.Fonts->Build();
-
-    // Setup Platform/Renderer backends
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
-    ImGui_ImplOpenGL3_Init("#version 150");
-
-    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-    // 渲染循环
-    while (!glfwWindowShouldClose(window)) {
-        glfwPollEvents();
-        if (glfwGetWindowAttrib(window, GLFW_ICONIFIED) != 0) {
-            ImGui_ImplGlfw_Sleep(10);
-            continue;
-        }
-
-        // Start the Dear ImGui frame
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
-        imgui_menu();
-
-        // Rendering
-        ImGui::Render();
-
-        int display_w, display_h;
-        glfwGetFramebufferSize(window, &display_w, &display_h);
-        glViewport(0, 0, display_w, display_h);
-        glClearColor(clear_color.x * clear_color.w,
-                     clear_color.y * clear_color.w,
-                     clear_color.z * clear_color.w,
-                     clear_color.w);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        // 交换缓冲区和轮询IO事件
-        glfwSwapBuffers(window);
-    }
-
-    // Cleanup
-    ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplGlfw_Shutdown();
-    ImGui::DestroyContext();
-
-    glfwDestroyWindow(window);
-
-    // 清理资源
-    glfwTerminate();
-    return 0;
+    return app.exec();
 }

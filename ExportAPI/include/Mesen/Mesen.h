@@ -69,7 +69,7 @@ enum MesenShortcut {
     MESEN_SHORTCUT_EXEC_RESET = 35,
 };
 
-typedef struct MesenKeyMapping {
+typedef struct {
     uint16_t A;
     uint16_t B;
     uint16_t up;
@@ -84,14 +84,14 @@ typedef struct MesenKeyMapping {
     uint32_t turbo_speed;
 } MesenKeyMapping;
 
-typedef struct MesenControllerConfig {
+typedef struct {
     MesenKeyMapping key_mapping;
     int type;
 } MesenControllerConfig;
 
 typedef uint32_t MesenPalette[512];
 
-typedef struct MesenNesConfig {
+typedef struct {
     MesenPalette user_palette;
     MesenControllerConfig port_1;
     MesenControllerConfig port_2;
@@ -99,20 +99,20 @@ typedef struct MesenNesConfig {
 
 typedef void (*NotificationCallback)(int event_type, void* param);
 
-typedef struct MesenSoftwareRendererSurface {
+typedef struct {
     uint32_t* buffer;
     uint32_t width;
-    uint32_t height = 0;
+    uint32_t height;
     bool is_dirty;
 } MesenSoftwareRendererSurface;
 
-typedef struct MesenSoftwareRendererFrame {
+typedef struct {
     MesenSoftwareRendererSurface frame;
     MesenSoftwareRendererSurface emulator_HUD;
     MesenSoftwareRendererSurface script_HUD;
 } MesenSoftwareRendererFrame;
 
-typedef struct MesenVideoConfig {
+typedef struct {
     MesenVideoFilterType video_filter;
     double brightness;
     double contrast;
@@ -120,7 +120,7 @@ typedef struct MesenVideoConfig {
     double saturation;
 } MesenVideoConfig;
 
-typedef struct MesenPreferences {
+typedef struct {
     MesenHudDisplaySize HUD_size;
 
     bool show_fps;
@@ -130,7 +130,7 @@ typedef struct MesenPreferences {
 
 } MesenPreferences;
 
-typedef struct MesenExecuteShortcutParams {
+typedef struct {
     MesenShortcut shortcut;
     uint32_t param;
     void* param_ptr;
@@ -158,8 +158,6 @@ MESEN_API void mesen_resume();
 
 MESEN_API uint32_t mesen_get_version();
 MESEN_API const char* mesen_get_build_date();
-
-MESEN_API void mesen_dump_ROM_info();
 
 MESEN_API void mesen_take_screenshot(const char* save_to_path);
 
