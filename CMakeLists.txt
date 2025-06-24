@@ -20,7 +20,7 @@ add_custom_target(embed_NES_DB
 
 # MesenLib
 add_library(MesenLib STATIC "")
-target_compile_options(MesenLib PRIVATE -ftime-trace)
+# target_compile_options(MesenLib PRIVATE -ftime-trace)
 target_precompile_headers(MesenLib PRIVATE Core/pch.h)
 
 file(GLOB_RECURSE source 
