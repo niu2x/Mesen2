@@ -29,7 +29,8 @@ android {
 }
 
 dependencies {
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.constraintlayout
+	implementation libs.appcompat
+	implementation libs.material
+	implementation libs.constraintlayout
+	implementation 'org.apache.commons:commons-math3:3.6.1'
 }

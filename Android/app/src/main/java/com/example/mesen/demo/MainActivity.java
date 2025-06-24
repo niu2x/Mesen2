@@ -12,7 +12,7 @@ import com.example.mesen.demo.utils.Tip;
 import com.onehilltech.promises.Promise;
 
 import android.content.Intent;
-public class MainActivity extends AppCompatActivity implements MesenAPI.NotificationCallback {
+public class MainActivity extends AppCompatActivity implements MesenAPI.NotificationCallback, NesGamepadView.NesGamepadStateCallback {
 	// Used to load the 'demo' library on application startup.
 	static {
 		System.loadLibrary("MesenRT");
@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 
 	private FilePicker filePicker;
 	private CopyExternalFileToLocalFilesDir copyExternalFileToLocalFilesDir;
+	private NesGamepadView nesGamepadView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 		loadRomButton = binding.loadRom;
 		loadSaveButton = binding.loadSave;
 		resetButton = binding.reset;
+		nesGamepadView = binding.nesGamepad;
 
 		registerClickListeners();
 
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 		});
 		resetButton.setOnClickListener(view -> {
 		});
+		nesGamepadView.setNesGamepadStateCallback(this);
 	}
 
 	void loadRom() {
@@ -88,5 +91,9 @@ public class MainActivity extends AppCompatActivity implements MesenAPI.Notifica
 	@Override
 	public void notifyRefreshSoftwareRenderer(int[] buffer, int width, int height) {
 		surfaceViewRenderer.updateFrameBuffer(buffer, width, height);
+	}
+
+	@Override
+	public void notifyNesGamepadStateChange(NesGamepadView.GamepadState gamepadState) {
 	}
 }
