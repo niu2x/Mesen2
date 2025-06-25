@@ -8,6 +8,8 @@ add_executable(Childhood-Fun "")
 
 target_sources(Childhood-Fun PRIVATE
     src/main.cpp
+    src/game_view.cpp
+    src/main_window.cpp
 )
 
 target_include_directories(Childhood-Fun PRIVATE
@@ -21,7 +23,14 @@ target_link_directories(Childhood-Fun PRIVATE
 target_link_libraries(Childhood-Fun PRIVATE
     MesenRT
     Qt5::Widgets
+    OpenGL
 )
 
 
 install(TARGETS Childhood-Fun DESTINATION bin)
+
+
+set_target_properties(Childhood-Fun PROPERTIES
+    INSTALL_RPATH "$ORIGIN/../lib"
+    BUILD_WITH_INSTALL_RPATH TRUE
+)

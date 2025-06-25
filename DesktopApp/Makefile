@@ -20,4 +20,3 @@ build-linux:
 		-DDIST=$(CUR_DIR)/../dist/$(triple)
 	cmake --build ../build/$(triple)/DesktopApp -j 2
 	cmake --install ../build/$(triple)/DesktopApp --prefix ../dist/$(triple)
-	cp NotoSansSC-Regular.ttf ../dist/$(triple)/bin/

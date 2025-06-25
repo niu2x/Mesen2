@@ -44,9 +44,14 @@ double mesen_get_aspect_ratio() {
     return GetAspectRatio();
 }
 
-void* mesen_register_notification_callback(NotificationCallback callback)
-{
-    return RegisterNotificationCallback(callback);
+MesenNotificationCallback user_notification_callback = NULL;
+static void forward_notification_callback(int type, void* param) {
+    user_notification_callback((MesenNotificationType)type, param);
+}
+
+void* mesen_register_notification_callback(MesenNotificationCallback callback) {
+    user_notification_callback = callback;
+    return RegisterNotificationCallback(forward_notification_callback);
 }
 void mesen_unregister_notification_callback(void* handle)
 {
@@ -79,4 +84,11 @@ void mesen_execute_shortcut(const MesenExecuteShortcutParams* exec_params)
         .Param = exec_params->param,
         .ParamPtr = exec_params->param_ptr,
     });
+}
+
+size_t mesen_get_log(char* out_buffer, size_t max_length) {
+    auto logs = MessageManager::GetLog();
+    StringUtilities::CopyToBuffer(logs, out_buffer, max_length);
+    MessageManager::ClearLog();
+    return logs.size();
 }

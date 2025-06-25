@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Mesen/api.h>
-#include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -86,18 +87,18 @@ typedef struct {
 
 typedef struct {
     MesenKeyMapping key_mapping;
-    int type;
+    MesenControllerType type;
 } MesenControllerConfig;
 
 typedef uint32_t MesenPalette[512];
 
 typedef struct {
-    MesenPalette user_palette;
+    const MesenPalette* user_palette;
     MesenControllerConfig port_1;
     MesenControllerConfig port_2;
 } MesenNesConfig;
 
-typedef void (*NotificationCallback)(int event_type, void* param);
+typedef void (*MesenNotificationCallback)(MesenNotificationType event_type, void* param);
 
 typedef struct {
     uint32_t* buffer;
@@ -127,6 +128,7 @@ typedef struct {
     bool show_frame_counter;
     bool show_game_timer;
     bool show_debug_info;
+    bool disable_on_screen_display;
 
 } MesenPreferences;
 
@@ -167,7 +169,7 @@ MESEN_API void mesen_set_output_to_stdout(bool enable);
 MESEN_API void mesen_display_message(const char* title, const char* msg, const char* param1, const char* param2);
 
 // register / unregister notification callback
-MESEN_API void* mesen_register_notification_callback(NotificationCallback);
+MESEN_API void* mesen_register_notification_callback(MesenNotificationCallback);
 MESEN_API void mesen_unregister_notification_callback(void* handle);
 MESEN_API const char* mesen_get_notification_type_name(int noti_type);
 
@@ -180,6 +182,8 @@ MESEN_API void mesen_set_video_config(const MesenVideoConfig* video_config);
 MESEN_API void mesen_set_preferences(const MesenPreferences* preferences);
 
 MESEN_API void mesen_execute_shortcut(const MesenExecuteShortcutParams* exec_params);
+
+MESEN_API size_t mesen_get_log(char* out_buffer, size_t max_length);
 
 #ifdef __cplusplus
 }
