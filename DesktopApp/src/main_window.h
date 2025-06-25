@@ -21,6 +21,9 @@ private:
 
     QString get_app_data_dir();
 
+    void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
+
     static void mesen_notification_callback(MesenNotificationType event_type, void* param);
     static MainWindow* singleton_;
 };

@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QFileDialog>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QMenuBar>
 #include <QMessageBox>
@@ -15,6 +16,21 @@
 #include <QTimer>
 
 #include <Mesen/Mesen.h>
+
+enum {
+    KEY_INDEX_A = 1,
+    KEY_INDEX_B,
+    KEY_INDEX_TURBO_A,
+    KEY_INDEX_TURBO_B,
+    KEY_INDEX_UP,
+    KEY_INDEX_DOWN,
+    KEY_INDEX_LEFT,
+    KEY_INDEX_RIGHT,
+    KEY_INDEX_SELECT,
+    KEY_INDEX_START,
+};
+
+static std::map<uint32_t, int> user_key_mapping;
 
 MainWindow* MainWindow::singleton_ = nullptr;
 
@@ -57,6 +73,17 @@ MainWindow::MainWindow()
     auto log_update_timer = new QTimer(this);
     log_update_timer->start(1000);
     QObject::connect(log_update_timer, &QTimer::timeout, this, &MainWindow::update_log_view);
+
+    user_key_mapping[Qt::Key_A] = KEY_INDEX_LEFT;
+    user_key_mapping[Qt::Key_W] = KEY_INDEX_UP;
+    user_key_mapping[Qt::Key_S] = KEY_INDEX_DOWN;
+    user_key_mapping[Qt::Key_D] = KEY_INDEX_RIGHT;
+    user_key_mapping[Qt::Key_U] = KEY_INDEX_B;
+    user_key_mapping[Qt::Key_I] = KEY_INDEX_TURBO_A;
+    user_key_mapping[Qt::Key_J] = KEY_INDEX_TURBO_B;
+    user_key_mapping[Qt::Key_K] = KEY_INDEX_A;
+    user_key_mapping[Qt::Key_Space] = KEY_INDEX_SELECT;
+    user_key_mapping[Qt::Key_Return] = KEY_INDEX_START;
 }
 
 QString MainWindow::get_app_data_dir() {
@@ -113,10 +140,20 @@ void MainWindow::init_mesen() {
         .user_palette = &mesen_default_palette,
         .port_1 = {
             .key_mapping = {
-
+                .A = KEY_INDEX_A,
+                .B = KEY_INDEX_B,
+                .up = KEY_INDEX_UP,
+                .down = KEY_INDEX_DOWN,
+                .left = KEY_INDEX_LEFT,
+                .right = KEY_INDEX_RIGHT,
+                .start = KEY_INDEX_START,
+                .select = KEY_INDEX_SELECT,
+                .turbo_A = KEY_INDEX_TURBO_A,
+                .turbo_B = KEY_INDEX_TURBO_B,
+                .turbo_speed = 3,
             },
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
-        }
+        },
     };
     mesen_set_NES_config(&nes_config);
 
@@ -140,5 +177,22 @@ void MainWindow::mesen_notification_callback(MesenNotificationType noti_type, vo
         auto renderer_frame = (MesenSoftwareRendererFrame*)param;
         auto frame = renderer_frame->frame;
         singleton_->game_view_->set_frame_image(frame.buffer, frame.width, frame.height);
+    }
+}
+
+void MainWindow::keyPressEvent(QKeyEvent* event) {
+
+    auto it = user_key_mapping.find(event->key());
+    if (it != user_key_mapping.end()) {
+        mesen_set_key_state(it->second, true);
+        event->accept(); // 表示事件已处理
+    }
+}
+
+void MainWindow::keyReleaseEvent(QKeyEvent* event) {
+    auto it = user_key_mapping.find(event->key());
+    if (it != user_key_mapping.end()) {
+        mesen_set_key_state(it->second, false);
+        event->accept(); // 表示事件已处理
     }
 }
