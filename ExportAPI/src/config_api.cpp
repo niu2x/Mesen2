@@ -40,6 +40,9 @@ void mesen_set_NES_config(const MesenNesConfig* NES_config)
     config.Port1 = from(NES_config->port_1);
     config.Port2 = from(NES_config->port_2);
 
+    for (int i = 0; i < 11; i++)
+        config.ChannelVolumes[i] = 100;
+
     SetNesConfig(config);
 }
 

@@ -1,8 +1,12 @@
 #include "main_window.h"
 
 #include "game_view.h"
+
+#include <Mesen/Mesen.h>
 #include <QAction>
 #include <QApplication>
+#include <QAudioOutput>
+#include <QBuffer>
 #include <QDebug>
 #include <QFileDialog>
 #include <QKeyEvent>
@@ -14,8 +18,6 @@
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolBar>
-
-#include <Mesen/Mesen.h>
 
 enum {
     KEY_INDEX_A = 1,
@@ -35,7 +37,8 @@ static std::map<uint32_t, int> user_key_mapping;
 MainWindow* MainWindow::singleton_ = nullptr;
 
 MainWindow::MainWindow()
-    : QMainWindow() {
+    : QMainWindow()
+    , audio_output_(nullptr) {
 
     singleton_ = this;
 
@@ -89,6 +92,8 @@ MainWindow::MainWindow()
     user_key_mapping[Qt::Key_Space] = KEY_INDEX_SELECT;
     user_key_mapping[Qt::Key_Return] = KEY_INDEX_START;
 
+    game_sound_device_ = new GameSoundDevice(this);
+
     init_tools_bar();
 }
 
@@ -102,6 +107,49 @@ void MainWindow::init_tools_bar() {
         MesenExecuteShortcutParams shortcut = { .action = MESEN_SHORTCUT_TYPE_EXEC_RESET };
         mesen_execute_shortcut(&shortcut);
     });
+}
+
+void MainWindow::start_audio_device(bool is_stereo, uint32_t sample_rate) {
+    QCoreApplication* app = QCoreApplication::instance();
+    QMetaObject::invokeMethod(
+        app,
+        [this, sample_rate, is_stereo]() {
+            if (!audio_output_) {
+                audio_format_.setSampleRate(sample_rate);
+                audio_format_.setChannelCount(is_stereo ? 2 : 1);
+                audio_format_.setSampleSize(16);
+                audio_format_.setCodec("audio/pcm");
+                audio_format_.setByteOrder(QAudioFormat::LittleEndian);
+                audio_format_.setSampleType(QAudioFormat::SignedInt);
+
+                game_sound_device_->start();
+
+                audio_output_ = new QAudioOutput(audio_format_, this);
+                audio_output_->setBufferSize(11520);
+
+                audio_output_->start(game_sound_device_);
+            }
+        },
+        Qt::QueuedConnection);
+}
+
+void MainWindow::stop_audio_device() {
+    QCoreApplication* app = QCoreApplication::instance();
+    QMetaObject::invokeMethod(
+        app,
+        [this]() {
+            if (audio_output_) {
+                // 停止音频
+                audio_output_->stop();
+
+                // 安排在下一次事件循环中删除
+                audio_output_->deleteLater();
+                audio_output_ = nullptr; // 可选，但建议保持一致性
+
+                game_sound_device_->stop();
+            }
+        },
+        Qt::QueuedConnection);
 }
 
 QString MainWindow::get_app_data_dir() {
@@ -212,6 +260,12 @@ void MainWindow::mesen_notification_callback(MesenNotificationType noti_type, vo
         auto renderer_frame = (MesenSoftwareRendererFrame*)param;
         auto frame = renderer_frame->frame;
         singleton_->game_view_->set_frame_image(frame.buffer, frame.width, frame.height);
+    } else if (noti_type == MESEN_NOTIFICATION_TYPE_START_AUDIO_DEVICE) {
+        auto* device_config = (MesenAudioDeviceParam*)param;
+        singleton_->start_audio_device(device_config->is_stereo, device_config->sample_rate);
+
+    } else if (noti_type == MESEN_NOTIFICATION_TYPE_STOP_AUDIO_DEVICE) {
+        singleton_->stop_audio_device();
     }
 }
 

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13.0 FATAL_ERROR)
 
 project(DesktopApp VERSION 0.1.0 LANGUAGES CXX C)
 
-find_package(Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Widgets Multimedia)
 set(CMAKE_AUTORCC ON)
 
 add_executable(Childhood-Fun "")
@@ -10,6 +10,7 @@ add_executable(Childhood-Fun "")
 target_sources(Childhood-Fun PRIVATE
     src/main.cpp
     src/game_view.cpp
+    src/game_sound_device.cpp
     src/main_window.cpp
     resources.qrc
 )
@@ -25,6 +26,7 @@ target_link_directories(Childhood-Fun PRIVATE
 target_link_libraries(Childhood-Fun PRIVATE
     MesenRT
     Qt5::Widgets
+    Qt5::Multimedia
     OpenGL
 )
 

@@ -21,6 +21,8 @@
 #define CHECK_SHORTCUT(c_name, cpp_name)                                                           \
     CHECK_ENUM(MESEN_SHORTCUT_TYPE_, c_name, EmulatorShortcut, cpp_name)
 
+#define CHECK_STRUCT(A, B) static_assert(sizeof(A) == sizeof(B));
+
 static void check() {
     CHECK_CONTROLLER_TYPE(NES_CONTROLLER, NesController);
 
@@ -48,6 +50,8 @@ static void check() {
     CHECK_NOTIFICATION_TYPE(CHEATS_CHANGED, CheatsChanged);
     CHECK_NOTIFICATION_TYPE(REQUEST_CONFIG_CHANGE, RequestConfigChange);
     CHECK_NOTIFICATION_TYPE(REFRESH_SOFTWARE_RENDERER, RefreshSoftwareRenderer);
+    CHECK_NOTIFICATION_TYPE(START_AUDIO_DEVICE, StartAudioDevice);
+    CHECK_NOTIFICATION_TYPE(STOP_AUDIO_DEVICE, StopAudioDevice);
 
     CHECK_VIDEO_FILTER_TYPE(NONE, None);
     CHECK_VIDEO_FILTER_TYPE(NTSC_BLARGG, NtscBlargg);
@@ -69,4 +73,7 @@ static void check() {
     CHECK_HUD_DISPLAY_SIZE(SCALED, Scaled);
 
     CHECK_SHORTCUT(EXEC_RESET, ExecReset);
+
+    // CHECK_STRUCT(MesenSoftwareRendererFrame, SoftwareRendererFrame);
+    // CHECK_STRUCT(MesenSoftwareRendererSurface, SoftwareRendererSurface);
 }

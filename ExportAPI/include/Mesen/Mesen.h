@@ -40,6 +40,8 @@ enum MesenNotificationType {
     MESEN_NOTIFICATION_TYPE_CHEATS_CHANGED,
     MESEN_NOTIFICATION_TYPE_REQUEST_CONFIG_CHANGE,
     MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER,
+    MESEN_NOTIFICATION_TYPE_START_AUDIO_DEVICE,
+    MESEN_NOTIFICATION_TYPE_STOP_AUDIO_DEVICE,
 };
 
 // Should keep consistent with same as VideoFilterType (Core/Shared/SettingTypes.h)
@@ -138,6 +140,11 @@ typedef struct {
     void* param_ptr;
 } MesenExecuteShortcutParams;
 
+typedef struct {
+    uint32_t sample_rate;
+    bool is_stereo;
+} MesenAudioDeviceParam;
+
 MESEN_API extern const MesenPalette mesen_default_palette;
 
 // /init & release
@@ -187,6 +194,8 @@ MESEN_API void mesen_execute_shortcut(const MesenExecuteShortcutParams* exec_par
 MESEN_API size_t mesen_get_log(char* out_buffer, size_t max_length);
 
 MESEN_API const char* mesen_get_recent_games_folder();
+
+MESEN_API void mesen_fill_audio_buffer(void* out_buffer, size_t len);
 
 #ifdef __cplusplus
 }

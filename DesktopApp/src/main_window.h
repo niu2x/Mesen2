@@ -1,11 +1,15 @@
 #pragma once
 
-#include "game_view.h"
-#include <Mesen/Mesen.h>
 #include <QApplication>
+#include <QAudioOutput>
 #include <QMainWindow>
 #include <QMenuBar>
 #include <QTextEdit>
+
+#include <Mesen/Mesen.h>
+
+#include "game_sound_device.h"
+#include "game_view.h"
 
 class MainWindow : public QMainWindow {
 public:
@@ -21,6 +25,10 @@ private:
     GameView* game_view_;
     QMenu* recent_games_menu_;
 
+    QAudioFormat audio_format_;
+    QAudioOutput* audio_output_;
+    GameSoundDevice* game_sound_device_;
+
     QString get_app_data_dir();
 
     void keyPressEvent(QKeyEvent* event) override;
@@ -29,6 +37,9 @@ private:
     void build_recent_games_menu();
 
     void init_tools_bar();
+
+    void start_audio_device(bool is_stereo, uint32_t sample_rate);
+    void stop_audio_device();
 
     static void mesen_notification_callback(MesenNotificationType event_type, void* param);
     static MainWindow* singleton_;

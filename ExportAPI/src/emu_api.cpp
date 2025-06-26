@@ -102,3 +102,8 @@ const char* mesen_get_recent_games_folder() {
 void mesen_load_recent_game(const char* file, bool reset_game) {
     LoadRecentGame((char*)file, reset_game);
 }
+
+void mesen_fill_audio_buffer(void* out_buffer, size_t len) {
+    auto* software_sound_manager = static_cast<SoftwareSoundManager*>(_soundManager.get());
+    software_sound_manager->FillAudioBuffer((uint8_t*)out_buffer, len);
+}
