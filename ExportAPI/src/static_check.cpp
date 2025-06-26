@@ -19,7 +19,7 @@
     CHECK_ENUM(MESEN_HUD_DISPLAY_SIZE_, c_name, HudDisplaySize, cpp_name)
 
 #define CHECK_SHORTCUT(c_name, cpp_name)                                                           \
-    CHECK_ENUM(MESEN_SHORTCUT_, c_name, EmulatorShortcut, cpp_name)
+    CHECK_ENUM(MESEN_SHORTCUT_TYPE_, c_name, EmulatorShortcut, cpp_name)
 
 static void check() {
     CHECK_CONTROLLER_TYPE(NES_CONTROLLER, NesController);

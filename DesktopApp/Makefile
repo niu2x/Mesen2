@@ -8,15 +8,13 @@ CUR_DIR := $(dir $(abspath $(MAKEFILE_PATH)))
 triple := x86_64-PC-Linux
 
 build-linux:
-	CC=clang CXX=clang++ cmake -S .. -B ../build/$(triple)/MesenRT \
-		-GNinja \
+	cmake -S .. -B ../build/$(triple)/MesenRT \
 		-DCMAKE_BUILD_TYPE=Release
-	cmake --build ../build/$(triple)/MesenRT -j 2
+	cmake --build ../build/$(triple)/MesenRT -j 11
 	cmake --install ../build/$(triple)/MesenRT --prefix ../dist/$(triple)
 
 	cmake -S . -DCMAKE_BUILD_TYPE=Release \
 		-B ../build/$(triple)/DesktopApp \
-		-GNinja \
 		-DDIST=$(CUR_DIR)/../dist/$(triple)
-	cmake --build ../build/$(triple)/DesktopApp -j 2
+	cmake --build ../build/$(triple)/DesktopApp -j 11
 	cmake --install ../build/$(triple)/DesktopApp --prefix ../dist/$(triple)

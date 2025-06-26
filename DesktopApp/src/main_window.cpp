@@ -13,6 +13,7 @@
 #include <QStatusBar>
 #include <QTextEdit>
 #include <QTimer>
+#include <QToolBar>
 
 #include <Mesen/Mesen.h>
 
@@ -87,6 +88,20 @@ MainWindow::MainWindow()
     user_key_mapping[Qt::Key_K] = KEY_INDEX_A;
     user_key_mapping[Qt::Key_Space] = KEY_INDEX_SELECT;
     user_key_mapping[Qt::Key_Return] = KEY_INDEX_START;
+
+    init_tools_bar();
+}
+
+void MainWindow::init_tools_bar() {
+    auto tools_bar = new QToolBar();
+    addToolBar(tools_bar);
+
+    auto reset_btn = new QAction(QIcon(":/icon/reset.png"), "Reset");
+    tools_bar->addAction(reset_btn);
+    QObject::connect(reset_btn, &QAction::triggered, []() {
+        MesenExecuteShortcutParams shortcut = { .action = MESEN_SHORTCUT_TYPE_EXEC_RESET };
+        mesen_execute_shortcut(&shortcut);
+    });
 }
 
 QString MainWindow::get_app_data_dir() {

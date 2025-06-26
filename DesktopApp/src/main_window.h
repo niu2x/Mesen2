@@ -28,6 +28,8 @@ private:
 
     void build_recent_games_menu();
 
+    void init_tools_bar();
+
     static void mesen_notification_callback(MesenNotificationType event_type, void* param);
     static MainWindow* singleton_;
 };

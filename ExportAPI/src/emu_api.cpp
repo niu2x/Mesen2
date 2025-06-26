@@ -80,7 +80,7 @@ void mesen_display_message(const char* title, const char* msg, const char* param
 void mesen_execute_shortcut(const MesenExecuteShortcutParams* exec_params)
 {
     ExecuteShortcut({
-        .Shortcut = (EmulatorShortcut)exec_params->shortcut,
+        .Shortcut = (EmulatorShortcut)exec_params->action,
         .Param = exec_params->param,
         .ParamPtr = exec_params->param_ptr,
     });

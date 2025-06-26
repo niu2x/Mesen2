@@ -66,8 +66,8 @@ enum MesenHudDisplaySize {
     MESEN_HUD_DISPLAY_SIZE_SCALED,
 };
 
-enum MesenShortcut {
-    MESEN_SHORTCUT_EXEC_RESET = 35,
+enum MesenShortcutType {
+    MESEN_SHORTCUT_TYPE_EXEC_RESET = 35,
 };
 
 typedef struct {
@@ -133,7 +133,7 @@ typedef struct {
 } MesenPreferences;
 
 typedef struct {
-    MesenShortcut shortcut;
+    MesenShortcutType action;
     uint32_t param;
     void* param_ptr;
 } MesenExecuteShortcutParams;
