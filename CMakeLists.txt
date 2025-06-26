@@ -116,16 +116,16 @@ if(${CMAKE_SYSTEM_NAME} STREQUAL "Emscripten")
 endif()
 
 option(BUILD_Examples "BUILD_Examples" OFF)
+option(BUILD_profiler "BUILD_profiler" OFF)
 
 if(BUILD_Examples)
-    # TerminalPlayer
-    # find_package(OpenCV REQUIRED)
-    # add_executable(TerminalPlayer ExportAPI/examples/TerminalPlayer/main.cpp)
-    # target_include_directories(TerminalPlayer PRIVATE ${OpenCV_INCLUDE_DIRS})
-    # target_link_libraries(TerminalPlayer PRIVATE MesenRT ${OpenCV_LIBS} ncurses)
-
-    # TakeScreenshot
     add_executable(TakeScreenshot ExportAPI/examples/TakeScreenshot/main.cpp)
     target_link_libraries(TakeScreenshot PRIVATE MesenRT pthread)
 
+endif()
+
+if(BUILD_profiler)
+    # profile
+    add_executable(profile ExportAPI/examples/profile.cpp)
+    target_link_libraries(profile PRIVATE MesenRT pthread)
 endif()
