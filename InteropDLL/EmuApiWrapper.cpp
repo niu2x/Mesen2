@@ -23,7 +23,7 @@
 	#include "Core/Shared/Interfaces/IAudioDevice.h"
 	#include "Core/Shared/Interfaces/IMouseManager.h"
 	#include "SoftwareDevice/SoftwareKeyManager.h"
-	// #include "SoftwareDevice/SoftwareMouseManager.h"
+	#include "SoftwareDevice/SoftwareSoundManager.h"
 #elif _WIN32
 	#include "Windows/Renderer.h"
 	#include "Windows/SoundManager.h"
@@ -109,6 +109,7 @@ extern "C" {
 
 			if(!noAudio) {
 				#ifdef ONLY_SOFTWARE_DEVICE
+                    _soundManager.reset(new SoftwareSoundManager(_emu.get()));
 				#elif _WIN32
 					_soundManager.reset(new SoundManager(_emu.get(), (HWND)_windowHandle));
 				#else
