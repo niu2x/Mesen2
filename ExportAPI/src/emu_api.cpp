@@ -92,3 +92,11 @@ size_t mesen_get_log(char* out_buffer, size_t max_length) {
     MessageManager::ClearLog();
     return logs.size();
 }
+
+const char* mesen_get_recent_games_folder() {
+    static std::string recent_games_folder;
+    recent_games_folder = FolderUtilities::GetRecentGamesFolder();
+    return recent_games_folder.c_str();
+}
+
+void mesen_load_recent_game(const char* file, bool reset_game) { LoadRecentGame(file, reset_game); }

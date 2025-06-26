@@ -151,6 +151,7 @@ MESEN_API void mesen_release();
 MESEN_API void mesen_set_NES_config(const MesenNesConfig* NES_config);
 
 MESEN_API bool mesen_load_ROM(const char* file, const char* patch_file);
+MESEN_API void mesen_load_recent_game(const char* file, bool reset_game);
 
 MESEN_API bool mesen_is_running();
 MESEN_API bool mesen_is_paused();
@@ -184,6 +185,8 @@ MESEN_API void mesen_set_preferences(const MesenPreferences* preferences);
 MESEN_API void mesen_execute_shortcut(const MesenExecuteShortcutParams* exec_params);
 
 MESEN_API size_t mesen_get_log(char* out_buffer, size_t max_length);
+
+MESEN_API const char* mesen_get_recent_games_folder();
 
 #ifdef __cplusplus
 }

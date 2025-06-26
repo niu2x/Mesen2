@@ -7,7 +7,6 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 #include <QLabel>
-#include <QMenuBar>
 #include <QMessageBox>
 #include <QSplitter>
 #include <QStandardPaths>
@@ -46,6 +45,10 @@ MainWindow::MainWindow()
     QAction* load_ROM_action = new QAction("Load ROM", this);
     file_menu->addAction(load_ROM_action);
     QObject::connect(load_ROM_action, &QAction::triggered, this, &MainWindow::load_ROM);
+
+    recent_games_menu_ = file_menu->addMenu("Recent Games");
+    QObject::connect(
+        recent_games_menu_, &QMenu::aboutToShow, this, &MainWindow::build_recent_games_menu);
 
     QMenu* help_menu = menu_bar->addMenu("Help");
     QAction* about_action = new QAction("About", this);
@@ -121,6 +124,23 @@ void MainWindow::load_ROM() {
 }
 
 MainWindow::~MainWindow() { mesen_release(); }
+
+void MainWindow::build_recent_games_menu() {
+    recent_games_menu_->clear();
+    QDir dir(mesen_get_recent_games_folder());
+
+    if (!dir.exists()) {
+        return;
+    }
+
+    for (const QFileInfo& file : dir.entryInfoList(QDir::Files)) {
+        QAction* action = recent_games_menu_->addAction(file.fileName());
+        QObject::connect(action, &QAction::triggered, [= file]() {
+            auto path = file.absoluteFilePath();
+            mesen_load_recent_game(path.toUtf8().constData(), false);
+        });
+    }
+}
 
 void MainWindow::init_mesen() {
     mesen_init();
