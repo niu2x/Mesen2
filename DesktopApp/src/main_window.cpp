@@ -109,11 +109,11 @@ void MainWindow::init_tools_bar() {
     });
 }
 
-void MainWindow::start_audio_device(bool is_stereo, uint32_t sample_rate) {
+void MainWindow::start_audio_device(uint32_t buffer_size, bool is_stereo, uint32_t sample_rate) {
     QCoreApplication* app = QCoreApplication::instance();
     QMetaObject::invokeMethod(
         app,
-        [this, sample_rate, is_stereo]() {
+        [this, sample_rate, is_stereo, buffer_size]() {
             if (!audio_output_) {
                 audio_format_.setSampleRate(sample_rate);
                 audio_format_.setChannelCount(is_stereo ? 2 : 1);
@@ -125,7 +125,7 @@ void MainWindow::start_audio_device(bool is_stereo, uint32_t sample_rate) {
                 game_sound_device_->start();
 
                 audio_output_ = new QAudioOutput(audio_format_, this);
-                audio_output_->setBufferSize(11520);
+                audio_output_->setBufferSize(buffer_size);
 
                 audio_output_->start(game_sound_device_);
             }
@@ -143,7 +143,7 @@ void MainWindow::stop_audio_device() {
                 audio_output_->stop();
 
                 // 安排在下一次事件循环中删除
-                audio_output_->deleteLater();
+                delete audio_output_;
                 audio_output_ = nullptr; // 可选，但建议保持一致性
 
                 game_sound_device_->stop();
@@ -187,6 +187,11 @@ void MainWindow::load_ROM() {
 }
 
 MainWindow::~MainWindow() { mesen_release(); }
+
+void MainWindow::closeEvent(QCloseEvent* event) {
+    stop_audio_device();
+    event->accept();
+}
 
 void MainWindow::build_recent_games_menu() {
     recent_games_menu_->clear();
@@ -261,8 +266,8 @@ void MainWindow::mesen_notification_callback(MesenNotificationType noti_type, vo
         auto frame = renderer_frame->frame;
         singleton_->game_view_->set_frame_image(frame.buffer, frame.width, frame.height);
     } else if (noti_type == MESEN_NOTIFICATION_TYPE_START_AUDIO_DEVICE) {
-        auto* device_config = (MesenAudioDeviceParam*)param;
-        singleton_->start_audio_device(device_config->is_stereo, device_config->sample_rate);
+        auto* device = (MesenAudioDeviceParam*)param;
+        singleton_->start_audio_device(device->buffer_size, device->is_stereo, device->sample_rate);
 
     } else if (noti_type == MESEN_NOTIFICATION_TYPE_STOP_AUDIO_DEVICE) {
         singleton_->stop_audio_device();

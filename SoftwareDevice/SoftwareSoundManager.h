@@ -6,6 +6,7 @@
 class Emulator;
 
 struct AudioDeviceParam {
+    uint32_t bufferSize;
     uint32_t sampleRate;
     bool isStereo;
 };

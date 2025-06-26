@@ -112,7 +112,7 @@ void SoftwareSoundManager::PlayBuffer(int16_t* soundBuffer,
     }
 
     if (playWriteByteLatency > byteLatency) {
-        AudioDeviceParam deviceConfig = { sampleRate, isStereo };
+        AudioDeviceParam deviceConfig = { (uint32_t)byteLatency, sampleRate, isStereo };
         _emu->GetNotificationManager()->SendNotification(ConsoleNotificationType::StartAudioDevice,
                                                          &deviceConfig);
     }

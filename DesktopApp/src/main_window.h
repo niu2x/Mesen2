@@ -16,6 +16,9 @@ public:
     MainWindow();
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent* event) override;
+
 private:
     void init_mesen();
     void update_log_view();
@@ -38,7 +41,7 @@ private:
 
     void init_tools_bar();
 
-    void start_audio_device(bool is_stereo, uint32_t sample_rate);
+    void start_audio_device(uint32_t buffer_size, bool is_stereo, uint32_t sample_rate);
     void stop_audio_device();
 
     static void mesen_notification_callback(MesenNotificationType event_type, void* param);

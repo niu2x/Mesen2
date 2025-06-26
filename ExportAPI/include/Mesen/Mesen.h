@@ -141,6 +141,7 @@ typedef struct {
 } MesenExecuteShortcutParams;
 
 typedef struct {
+    uint32_t buffer_size;
     uint32_t sample_rate;
     bool is_stereo;
 } MesenAudioDeviceParam;
