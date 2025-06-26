@@ -99,4 +99,6 @@ const char* mesen_get_recent_games_folder() {
     return recent_games_folder.c_str();
 }
 
-void mesen_load_recent_game(const char* file, bool reset_game) { LoadRecentGame(file, reset_game); }
+void mesen_load_recent_game(const char* file, bool reset_game) {
+    LoadRecentGame((char*)file, reset_game);
+}

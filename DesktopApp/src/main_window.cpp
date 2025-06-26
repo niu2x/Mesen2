@@ -135,7 +135,7 @@ void MainWindow::build_recent_games_menu() {
 
     for (const QFileInfo& file : dir.entryInfoList(QDir::Files)) {
         QAction* action = recent_games_menu_->addAction(file.fileName());
-        QObject::connect(action, &QAction::triggered, [= file]() {
+        QObject::connect(action, &QAction::triggered, [file]() {
             auto path = file.absoluteFilePath();
             mesen_load_recent_game(path.toUtf8().constData(), false);
         });

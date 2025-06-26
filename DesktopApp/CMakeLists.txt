@@ -34,3 +34,11 @@ set_target_properties(Childhood-Fun PROPERTIES
     INSTALL_RPATH "$ORIGIN/../lib"
     BUILD_WITH_INSTALL_RPATH TRUE
 )
+
+set_target_properties(Childhood-Fun PROPERTIES 
+    CXX_STANDARD 17
+    C_VISIBILITY_PRESET hidden
+    CXX_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+    POSITION_INDEPENDENT_CODE ON
+)
