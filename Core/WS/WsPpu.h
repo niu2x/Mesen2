@@ -7,6 +7,7 @@
 
 class WsTimer;
 class WsConsole;
+class WsMemoryManager;
 
 class WsPpu final : public ISerializable
 {
@@ -14,6 +15,7 @@ private:
 	WsPpuState _state = {};
 	Emulator* _emu = nullptr;
 	WsConsole* _console = nullptr;
+	WsMemoryManager* _memoryManager = nullptr;
 	WsTimer* _timer = nullptr;
 	uint16_t* _outputBuffers[2] = {};
 	uint16_t* _currentBuffer = nullptr;
@@ -84,7 +86,7 @@ private:
 	void ProcessHblank();
 
 public:
-	WsPpu(Emulator* emu, WsConsole* console, WsTimer* timer, uint8_t* vram);
+	WsPpu(Emulator* emu, WsConsole* console, WsMemoryManager* memoryManager, WsTimer* timer, uint8_t* vram);
 	~WsPpu();
 
 	__forceinline void Exec()
