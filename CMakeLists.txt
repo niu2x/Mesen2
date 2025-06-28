@@ -23,6 +23,11 @@ add_library(MesenLib STATIC "")
 # target_compile_options(MesenLib PRIVATE -ftime-trace)
 target_precompile_headers(MesenLib PRIVATE Core/pch.h)
 
+if (WIN32)
+    target_compile_definitions(MesenLib PUBLIC -DUNICODE -D_UNICODE)  # 定义 Unicode 宏
+endif()
+
+
 file(GLOB_RECURSE source 
     Core/*.cpp
     Lua/*.c 

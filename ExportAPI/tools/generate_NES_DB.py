@@ -9,7 +9,7 @@ if '__main__' == __name__:
     os.makedirs(os.path.dirname(outfile), exist_ok=True)
 
     with open(outfile, 'wt', encoding='utf-8') as out:
-        out.write('R"RAW(\n')
         with open(infile, 'rt', encoding='utf-8') as f:
-            out.write(f.read())
-        out.write(')RAW"\n')
+            for line in f.readlines():
+                line = line.strip()
+                out.write(f'"{line}"\n')
