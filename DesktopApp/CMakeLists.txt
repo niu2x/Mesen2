@@ -12,6 +12,7 @@ target_sources(Childhood-Fun PRIVATE
     src/GameView.cpp
     src/GameSoundDevice.cpp
     src/MainWindow.cpp
+    src/ControlsSettingDialog.cpp
     resources.qrc
 )
 

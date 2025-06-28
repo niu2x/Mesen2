@@ -20,6 +20,8 @@
 #include <QTimer>
 #include <QToolBar>
 
+#include "ControlsSettingDialog.h"
+
 enum {
     APP_VK_A = 1,
     APP_VK_B,
@@ -54,6 +56,10 @@ void MainWindow::init_menu_bar() {
     QMenu* settings_menu = menu_bar->addMenu("Settings");
     QAction* controls_setting = new QAction("Controls Setting");
     settings_menu->addAction(controls_setting);
+    QObject::connect(controls_setting, &QAction::triggered, [this]() {
+        ControlsSettingDialog dialog(this);
+        dialog.exec();
+    });
 
     QMenu* help_menu = menu_bar->addMenu("Help");
     QAction* about_action = new QAction("About", this);
