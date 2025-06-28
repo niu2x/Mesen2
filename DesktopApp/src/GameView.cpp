@@ -1,4 +1,4 @@
-#include "game_view.h"
+#include "GameView.h"
 #include <QApplication>
 
 GameView::GameView(QWidget* parent)

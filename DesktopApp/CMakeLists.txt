@@ -9,9 +9,9 @@ add_executable(Childhood-Fun "")
 
 target_sources(Childhood-Fun PRIVATE
     src/main.cpp
-    src/game_view.cpp
-    src/game_sound_device.cpp
-    src/main_window.cpp
+    src/GameView.cpp
+    src/GameSoundDevice.cpp
+    src/MainWindow.cpp
     resources.qrc
 )
 

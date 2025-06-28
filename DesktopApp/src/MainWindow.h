@@ -8,8 +8,8 @@
 
 #include <Mesen/Mesen.h>
 
-#include "game_sound_device.h"
-#include "game_view.h"
+#include "GameSoundDevice.h"
+#include "GameView.h"
 
 class MainWindow : public QMainWindow {
 public:

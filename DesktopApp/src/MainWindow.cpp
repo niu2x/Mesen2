@@ -1,6 +1,6 @@
-#include "main_window.h"
+#include "MainWindow.h"
 
-#include "game_view.h"
+#include "GameView.h"
 
 #include <Mesen/Mesen.h>
 #include <QAction>
@@ -15,6 +15,7 @@
 #include <QSplitter>
 #include <QStandardPaths>
 #include <QStatusBar>
+#include <QTabWidget>
 #include <QTextEdit>
 #include <QTimer>
 #include <QToolBar>
@@ -66,14 +67,14 @@ MainWindow::MainWindow()
     game_view_ = new GameView();
     log_view_ = new QTextEdit();
 
-    QSplitter* splitter = new QSplitter(Qt::Vertical);
-    splitter->addWidget(game_view_);
-    splitter->addWidget(log_view_);
+    QTabWidget* tabs = new QTabWidget(this);
+    tabs->addTab(game_view_, "Game");
+    tabs->addTab(log_view_, "Log");
 
     log_view_->setFrameStyle(QFrame::Box);
     log_view_->setReadOnly(true);
 
-    setCentralWidget(splitter);
+    setCentralWidget(tabs);
 
     init_mesen();
 

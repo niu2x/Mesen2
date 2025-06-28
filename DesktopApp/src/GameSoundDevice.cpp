@@ -1,4 +1,4 @@
-#include "game_sound_device.h"
+#include "GameSoundDevice.h"
 #include <Mesen/Mesen.h>
 
 GameSoundDevice::GameSoundDevice(QObject* parent)
