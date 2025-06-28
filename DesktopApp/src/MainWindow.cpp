@@ -147,9 +147,8 @@ void MainWindow::stop_audio_device() {
                 // 停止音频
                 audio_output_->stop();
 
-                // 安排在下一次事件循环中删除
                 delete audio_output_;
-                audio_output_ = nullptr; // 可选，但建议保持一致性
+                audio_output_ = nullptr; 
 
                 game_sound_device_->stop();
             }
@@ -182,7 +181,7 @@ void MainWindow::update_log_view() {
 
 void MainWindow::load_ROM() {
     QString filename = QFileDialog::getOpenFileName(this, // 父窗口
-                                                    tr("Open File"), // 对话框标题
+                                                    tr("Select A ROM File"), // 对话框标题
                                                     "", // 初始目录
                                                     tr("ROM Files (*.nes);;") // 文件过滤器
     );
