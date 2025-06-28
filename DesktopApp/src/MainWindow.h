@@ -21,6 +21,7 @@ protected:
 
 private:
     void init_mesen();
+    void init_menu_bar();
     void update_log_view();
     void load_ROM();
 

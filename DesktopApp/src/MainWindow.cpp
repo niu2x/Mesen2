@@ -21,29 +21,24 @@
 #include <QToolBar>
 
 enum {
-    KEY_INDEX_A = 1,
-    KEY_INDEX_B,
-    KEY_INDEX_TURBO_A,
-    KEY_INDEX_TURBO_B,
-    KEY_INDEX_UP,
-    KEY_INDEX_DOWN,
-    KEY_INDEX_LEFT,
-    KEY_INDEX_RIGHT,
-    KEY_INDEX_SELECT,
-    KEY_INDEX_START,
-    KEY_INDEX_REWIND,
+    APP_VK_A = 1,
+    APP_VK_B,
+    APP_VK_TURBO_A,
+    APP_VK_TURBO_B,
+    APP_VK_UP,
+    APP_VK_DOWN,
+    APP_VK_LEFT,
+    APP_VK_RIGHT,
+    APP_VK_SELECT,
+    APP_VK_START,
+    APP_VK_REWIND,
 };
 
 static std::map<uint32_t, int> user_key_mapping;
 
 MainWindow* MainWindow::singleton_ = nullptr;
 
-MainWindow::MainWindow()
-    : QMainWindow()
-    , audio_output_(nullptr) {
-
-    singleton_ = this;
-
+void MainWindow::init_menu_bar() {
     QMenuBar* menu_bar = menuBar();
 
     QMenu* file_menu = menu_bar->addMenu("File");
@@ -56,6 +51,10 @@ MainWindow::MainWindow()
     QObject::connect(
         recent_games_menu_, &QMenu::aboutToShow, this, &MainWindow::build_recent_games_menu);
 
+    QMenu* settings_menu = menu_bar->addMenu("Settings");
+    QAction* controls_setting = new QAction("Controls Setting");
+    settings_menu->addAction(controls_setting);
+
     QMenu* help_menu = menu_bar->addMenu("Help");
     QAction* about_action = new QAction("About", this);
     help_menu->addAction(about_action);
@@ -64,6 +63,15 @@ MainWindow::MainWindow()
         messageBox.setText("这软件是完全免费~");
         messageBox.exec();
     });
+}
+
+MainWindow::MainWindow()
+    : QMainWindow()
+    , audio_output_(nullptr) {
+
+    singleton_ = this;
+
+    init_menu_bar();
 
     game_view_ = new GameView();
     log_view_ = new QTextEdit();
@@ -83,17 +91,17 @@ MainWindow::MainWindow()
     log_update_timer->start(1000);
     QObject::connect(log_update_timer, &QTimer::timeout, this, &MainWindow::update_log_view);
 
-    user_key_mapping[Qt::Key_A] = KEY_INDEX_LEFT;
-    user_key_mapping[Qt::Key_W] = KEY_INDEX_UP;
-    user_key_mapping[Qt::Key_S] = KEY_INDEX_DOWN;
-    user_key_mapping[Qt::Key_D] = KEY_INDEX_RIGHT;
-    user_key_mapping[Qt::Key_U] = KEY_INDEX_B;
-    user_key_mapping[Qt::Key_I] = KEY_INDEX_TURBO_A;
-    user_key_mapping[Qt::Key_J] = KEY_INDEX_TURBO_B;
-    user_key_mapping[Qt::Key_K] = KEY_INDEX_A;
-    user_key_mapping[Qt::Key_Space] = KEY_INDEX_SELECT;
-    user_key_mapping[Qt::Key_Return] = KEY_INDEX_START;
-    user_key_mapping[Qt::Key_B] = KEY_INDEX_REWIND;
+    user_key_mapping[Qt::Key_A] = APP_VK_LEFT;
+    user_key_mapping[Qt::Key_W] = APP_VK_UP;
+    user_key_mapping[Qt::Key_S] = APP_VK_DOWN;
+    user_key_mapping[Qt::Key_D] = APP_VK_RIGHT;
+    user_key_mapping[Qt::Key_U] = APP_VK_B;
+    user_key_mapping[Qt::Key_I] = APP_VK_TURBO_A;
+    user_key_mapping[Qt::Key_J] = APP_VK_TURBO_B;
+    user_key_mapping[Qt::Key_K] = APP_VK_A;
+    user_key_mapping[Qt::Key_Space] = APP_VK_SELECT;
+    user_key_mapping[Qt::Key_Return] = APP_VK_START;
+    user_key_mapping[Qt::Key_B] = APP_VK_REWIND;
 
     game_sound_device_ = new GameSoundDevice(this);
 
@@ -232,16 +240,16 @@ void MainWindow::init_mesen() {
         .user_palette = &mesen_default_palette,
         .port_1 = {
             .key_mapping = {
-                .A = KEY_INDEX_A,
-                .B = KEY_INDEX_B,
-                .up = KEY_INDEX_UP,
-                .down = KEY_INDEX_DOWN,
-                .left = KEY_INDEX_LEFT,
-                .right = KEY_INDEX_RIGHT,
-                .start = KEY_INDEX_START,
-                .select = KEY_INDEX_SELECT,
-                .turbo_A = KEY_INDEX_TURBO_A,
-                .turbo_B = KEY_INDEX_TURBO_B,
+                .A = APP_VK_A,
+                .B = APP_VK_B,
+                .up = APP_VK_UP,
+                .down = APP_VK_DOWN,
+                .left = APP_VK_LEFT,
+                .right = APP_VK_RIGHT,
+                .start = APP_VK_START,
+                .select = APP_VK_SELECT,
+                .turbo_A = APP_VK_TURBO_A,
+                .turbo_B = APP_VK_TURBO_B,
                 .turbo_speed = 3,
             },
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
@@ -255,7 +263,7 @@ void MainWindow::init_mesen() {
         .shortcut = MESEN_SHORTCUT_TYPE_REWIND,
         .key_combination = {
             .keys = {
-                KEY_INDEX_REWIND, 0, 0,
+                APP_VK_REWIND, 0, 0,
             },
         },
     };
