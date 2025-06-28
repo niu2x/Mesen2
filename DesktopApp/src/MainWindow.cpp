@@ -31,6 +31,7 @@ enum {
     KEY_INDEX_RIGHT,
     KEY_INDEX_SELECT,
     KEY_INDEX_START,
+    KEY_INDEX_REWIND,
 };
 
 static std::map<uint32_t, int> user_key_mapping;
@@ -92,6 +93,7 @@ MainWindow::MainWindow()
     user_key_mapping[Qt::Key_K] = KEY_INDEX_A;
     user_key_mapping[Qt::Key_Space] = KEY_INDEX_SELECT;
     user_key_mapping[Qt::Key_Return] = KEY_INDEX_START;
+    user_key_mapping[Qt::Key_B] = KEY_INDEX_REWIND;
 
     game_sound_device_ = new GameSoundDevice(this);
 
@@ -111,6 +113,7 @@ void MainWindow::init_tools_bar() {
 }
 
 void MainWindow::start_audio_device(uint32_t buffer_size, bool is_stereo, uint32_t sample_rate) {
+
     QCoreApplication* app = QCoreApplication::instance();
     QMetaObject::invokeMethod(
         app,
@@ -135,6 +138,7 @@ void MainWindow::start_audio_device(uint32_t buffer_size, bool is_stereo, uint32
 }
 
 void MainWindow::stop_audio_device() {
+
     QCoreApplication* app = QCoreApplication::instance();
     QMetaObject::invokeMethod(
         app,
@@ -246,6 +250,19 @@ void MainWindow::init_mesen() {
     };
     mesen_set_NES_config(&nes_config);
 
+    MesenShortcutKeyInfo shortcut_infos[1];
+
+    shortcut_infos[0] = {
+        .shortcut = MESEN_SHORTCUT_TYPE_REWIND,
+        .key_combination = {
+            .keys = {
+                KEY_INDEX_REWIND, 0, 0,
+            },
+        },
+    };
+
+    mesen_set_shortcut_keys(shortcut_infos, 1);
+
     MesenVideoConfig video_config = {
         .video_filter = MESEN_VIDEO_FILTER_TYPE_NONE,
         .brightness = 0,
@@ -276,18 +293,21 @@ void MainWindow::mesen_notification_callback(MesenNotificationType noti_type, vo
 }
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
-
-    auto it = user_key_mapping.find(event->key());
-    if (it != user_key_mapping.end()) {
-        mesen_set_key_state(it->second, true);
-        event->accept(); // 表示事件已处理
+    if (!event->isAutoRepeat()) {
+        auto it = user_key_mapping.find(event->key());
+        if (it != user_key_mapping.end()) {
+            mesen_set_key_state(it->second, true);
+            event->accept(); // 表示事件已处理
+        }
     }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent* event) {
-    auto it = user_key_mapping.find(event->key());
-    if (it != user_key_mapping.end()) {
-        mesen_set_key_state(it->second, false);
-        event->accept(); // 表示事件已处理
+    if (!event->isAutoRepeat()) {
+        auto it = user_key_mapping.find(event->key());
+        if (it != user_key_mapping.end()) {
+            mesen_set_key_state(it->second, false);
+            event->accept(); // 表示事件已处理
+        }
     }
 }

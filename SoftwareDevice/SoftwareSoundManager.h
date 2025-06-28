@@ -43,7 +43,10 @@ private:
     uint16_t _previousLatency = 0;
 
     std::recursive_mutex buffer_mutex_;
+
     uint8_t* _buffer = nullptr;
-    uint32_t _writePosition = 0;
-    uint32_t _readPosition = 0;
+    uint32_t write_position_ = 0;
+    uint32_t read_position_ = 0;
+    uint32_t data_count_ = 0;
+    bool audio_playing_ = false;
 };

@@ -86,7 +86,7 @@ generate_export_header(MesenRT
 
 target_sources(MesenRT PRIVATE
     ExportAPI/src/dump.cpp
-    ExportAPI/src/emu_api.cpp
+    ExportAPI/src/emulator_api.cpp
     ExportAPI/src/config_api.cpp
     ExportAPI/src/input_api.cpp
     ExportAPI/src/static_check.cpp

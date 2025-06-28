@@ -69,6 +69,8 @@ enum MesenHudDisplaySize {
 };
 
 enum MesenShortcutType {
+    MESEN_SHORTCUT_TYPE_REWIND = 1,
+    MESEN_SHORTCUT_TYPE_REWIND_10_SECONDS = 2,
     MESEN_SHORTCUT_TYPE_EXEC_RESET = 35,
 };
 
@@ -146,6 +148,15 @@ typedef struct {
     bool is_stereo;
 } MesenAudioDeviceParam;
 
+typedef struct {
+    uint16_t keys[3];
+} MesenKeyCombination;
+
+typedef struct {
+    MesenShortcutType shortcut;
+    MesenKeyCombination key_combination;
+} MesenShortcutKeyInfo;
+
 MESEN_API extern const MesenPalette mesen_default_palette;
 
 // /init & release
@@ -197,6 +208,8 @@ MESEN_API size_t mesen_get_log(char* out_buffer, size_t max_length);
 MESEN_API const char* mesen_get_recent_games_folder();
 
 MESEN_API void mesen_fill_audio_buffer(void* out_buffer, size_t len);
+
+MESEN_API void mesen_set_shortcut_keys(MesenShortcutKeyInfo shortcuts[], int count);
 
 #ifdef __cplusplus
 }

@@ -73,7 +73,9 @@ static void check() {
     CHECK_HUD_DISPLAY_SIZE(SCALED, Scaled);
 
     CHECK_SHORTCUT(EXEC_RESET, ExecReset);
+    CHECK_SHORTCUT(REWIND_10_SECONDS, RewindTenSecs);
+    CHECK_SHORTCUT(REWIND, Rewind);
 
-    // CHECK_STRUCT(MesenSoftwareRendererFrame, SoftwareRendererFrame);
+    CHECK_STRUCT(MesenExecuteShortcutParams, ExecuteShortcutParams);
     // CHECK_STRUCT(MesenSoftwareRendererSurface, SoftwareRendererSurface);
 }

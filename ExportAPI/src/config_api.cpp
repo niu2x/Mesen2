@@ -71,3 +71,16 @@ void mesen_set_preferences(const MesenPreferences* preferences)
     p.DisableOsd = preferences->disable_on_screen_display;
     SetPreferences(p);
 }
+
+void mesen_set_shortcut_keys(MesenShortcutKeyInfo p_shortcuts[], int count) {
+    static ShortcutKeyInfo shortcuts[512];
+    for (int i = 0; i < count; i++) {
+        shortcuts[i].Shortcut = (EmulatorShortcut)p_shortcuts[i].shortcut;
+        shortcuts[i].Keys = {
+            .Key1 = p_shortcuts[i].key_combination.keys[0],
+            .Key2 = p_shortcuts[i].key_combination.keys[1],
+            .Key3 = p_shortcuts[i].key_combination.keys[1],
+        };
+    }
+    SetShortcutKeys(shortcuts, count);
+}
