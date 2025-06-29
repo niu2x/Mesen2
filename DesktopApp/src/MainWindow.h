@@ -41,6 +41,10 @@ private:
     void build_recent_games_menu();
 
     void init_tools_bar();
+    void init_ui();
+
+    void init_settings();
+    void refresh_key_mappings();
 
     void start_audio_device(uint32_t buffer_size, bool is_stereo, uint32_t sample_rate);
     void stop_audio_device();

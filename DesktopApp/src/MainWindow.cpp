@@ -12,6 +12,7 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QMessageBox>
+#include <QSettings>
 #include <QSplitter>
 #include <QStandardPaths>
 #include <QStatusBar>
@@ -21,20 +22,7 @@
 #include <QToolBar>
 
 #include "ControlsSettingDialog.h"
-
-enum {
-    APP_VK_A = 1,
-    APP_VK_B,
-    APP_VK_TURBO_A,
-    APP_VK_TURBO_B,
-    APP_VK_UP,
-    APP_VK_DOWN,
-    APP_VK_LEFT,
-    APP_VK_RIGHT,
-    APP_VK_SELECT,
-    APP_VK_START,
-    APP_VK_REWIND,
-};
+#include "VirtualKey.h"
 
 static std::map<uint32_t, int> user_key_mapping;
 
@@ -71,14 +59,7 @@ void MainWindow::init_menu_bar() {
     });
 }
 
-MainWindow::MainWindow()
-    : QMainWindow()
-    , audio_output_(nullptr) {
-
-    singleton_ = this;
-
-    init_menu_bar();
-
+void MainWindow::init_ui() {
     game_view_ = new GameView();
     log_view_ = new QTextEdit();
 
@@ -91,27 +72,28 @@ MainWindow::MainWindow()
 
     setCentralWidget(tabs);
 
-    init_mesen();
-
     auto log_update_timer = new QTimer(this);
     log_update_timer->start(1000);
     QObject::connect(log_update_timer, &QTimer::timeout, this, &MainWindow::update_log_view);
 
-    user_key_mapping[Qt::Key_A] = APP_VK_LEFT;
-    user_key_mapping[Qt::Key_W] = APP_VK_UP;
-    user_key_mapping[Qt::Key_S] = APP_VK_DOWN;
-    user_key_mapping[Qt::Key_D] = APP_VK_RIGHT;
-    user_key_mapping[Qt::Key_U] = APP_VK_B;
-    user_key_mapping[Qt::Key_I] = APP_VK_TURBO_A;
-    user_key_mapping[Qt::Key_J] = APP_VK_TURBO_B;
-    user_key_mapping[Qt::Key_K] = APP_VK_A;
-    user_key_mapping[Qt::Key_Space] = APP_VK_SELECT;
-    user_key_mapping[Qt::Key_Return] = APP_VK_START;
-    user_key_mapping[Qt::Key_B] = APP_VK_REWIND;
-
     game_sound_device_ = new GameSoundDevice(this);
+}
 
+void MainWindow::init_settings() { }
+
+MainWindow::MainWindow()
+    : QMainWindow()
+    , audio_output_(nullptr) {
+
+    singleton_ = this;
+
+    init_menu_bar();
     init_tools_bar();
+    init_ui();
+
+    init_mesen();
+
+    refresh_key_mappings();
 }
 
 void MainWindow::init_tools_bar() {
@@ -226,6 +208,22 @@ void MainWindow::build_recent_games_menu() {
             mesen_load_recent_game(path.toUtf8().constData(), false);
         });
     }
+}
+
+void MainWindow::refresh_key_mappings() {
+    user_key_mapping.clear();
+
+    QSettings settings;
+
+    settings.beginGroup("Key Bindings");
+    for (int vk = APP_VK_BEGIN; vk < APP_VK_END; vk++) {
+
+        auto key_seq = QKeySequence(settings.value(vk_names[vk], default_keys[vk]).toString());
+        auto key = static_cast<Qt::Key>(key_seq[0]);
+        user_key_mapping[key] = vk;
+    }
+
+    settings.endGroup();
 }
 
 void MainWindow::init_mesen() {
