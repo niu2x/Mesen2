@@ -1,5 +1,4 @@
 #include "ControlsSettingDialog.h"
-#include "VirtualKey.h"
 #include <QDialogButtonBox>
 #include <QFrame>
 #include <QHeaderView>
@@ -29,34 +28,43 @@ ControlsSettingDialog::ControlsSettingDialog(QWidget* parent)
                      this,
                      &ControlsSettingDialog::apply);
 
-    nes_table_ = new QTableWidget(this);
-    tabs->addTab(nes_table_, "Nes");
-
-    nes_table_->setColumnCount(3);
-    nes_table_->setHorizontalHeaderLabels(
-        { tr("Action"), tr("Current Shortcut"), tr("Default Shortcut") });
-
-    nes_table_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    nes_table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    nes_table_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
-
-    nes_table_->verticalHeader()->setVisible(false);
-    nes_table_->setSelectionBehavior(QAbstractItemView::SelectRows);
-    nes_table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
-
-    nes_table_->setSelectionMode(QAbstractItemView::SingleSelection);
-
-    nes_table_->installEventFilter(this);
-
-    add_shortcut_items(nes_table_, nes_key_group.keys.data(), nes_key_group.keys.size());
+    tables_[0] = create_table(nes_key_group, tabs);
+    tables_[1] = create_table(misc_key_group, tabs);
 
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     adjustSize();
 }
 
+QTableWidget* ControlsSettingDialog::create_table(const VirtualKeyGroup& vk_group,
+                                                  QTabWidget* tabs) {
+    auto table = new QTableWidget(this);
+    tabs->addTab(table, vk_group.group_name.c_str());
+
+    table->setColumnCount(3);
+    table->setHorizontalHeaderLabels(
+        { tr("Action"), tr("Current Shortcut"), tr("Default Shortcut") });
+
+    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+
+    table->verticalHeader()->setVisible(false);
+    table->setSelectionBehavior(QAbstractItemView::SelectRows);
+    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+
+    table->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    table->installEventFilter(this);
+
+    add_shortcut_items(table, vk_group.keys.data(), vk_group.keys.size());
+    return table;
+}
+
 ControlsSettingDialog::~ControlsSettingDialog() { }
 
-void ControlsSettingDialog::add_shortcut_items(QTableWidget* table, int vk_array[], int count) {
+void ControlsSettingDialog::add_shortcut_items(QTableWidget* table,
+                                               const int vk_array[],
+                                               int count) {
     table->setRowCount(count);
 
     QSettings settings;
@@ -79,7 +87,8 @@ void ControlsSettingDialog::add_shortcut_items(QTableWidget* table, int vk_array
 }
 
 void ControlsSettingDialog::apply() {
-    save_settings(nes_table_);
+    save_settings(tables_[0]);
+    save_settings(tables_[1]);
     accept();
 }
 
@@ -89,8 +98,8 @@ void ControlsSettingDialog::save_settings(QTableWidget* table) {
 
     auto count = table->rowCount();
     for (int i = 0; i < count; i++) {
-        int vk = nes_table_->item(i, 0)->data(Qt::UserRole).toInt();
-        auto key_item = nes_table_->item(i, 1);
+        int vk = table->item(i, 0)->data(Qt::UserRole).toInt();
+        auto key_item = table->item(i, 1);
         if (key_item) {
             auto key_text = key_item->text();
 
@@ -110,14 +119,16 @@ bool ControlsSettingDialog::eventFilter(QObject* obj, QEvent* event) {
         QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
         if (!key_event->isAutoRepeat()) {
 
-            if (obj == nes_table_) {
-                int current_row = nes_table_->currentRow();
-                int vk = nes_table_->item(current_row, 0)->data(Qt::UserRole).toInt();
+            for (int i = 0; i < 2; i++) {
+                auto table = tables_[i];
 
-                QKeySequence key_seq(key_event->modifiers() | key_event->key());
-                nes_table_->setItem(current_row, 1, new QTableWidgetItem(key_seq.toString()));
-
-                return true;
+                if (obj == table) {
+                    int current_row = table->currentRow();
+                    int vk = table->item(current_row, 0)->data(Qt::UserRole).toInt();
+                    QKeySequence key_seq(key_event->modifiers() | key_event->key());
+                    table->setItem(current_row, 1, new QTableWidgetItem(key_seq.toString()));
+                    return true;
+                }
             }
         }
     }

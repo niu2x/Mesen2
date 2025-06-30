@@ -29,4 +29,6 @@ private:
     uint32_t canvas_width_;
     uint32_t canvas_height_;
     std::mutex image_mutex_;
+    bool using_super_skill_;
+    int super_skill_frame_index_;
 };

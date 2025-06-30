@@ -14,6 +14,12 @@ VirtualKeyGroup nes_key_group = { .group_name = "Nes",
                                       APP_VK_START,
                                   } } };
 
+VirtualKeyGroup misc_key_group = { .group_name = "Misc",
+                                   .keys = { {
+                                       APP_VK_REWIND,
+                                       APP_VK_SUPER_SKILL,
+                                   } } };
+
 static QKeySequence __default_keys[] = {
     Qt::Key_unknown,
     QKeySequence(Qt::Key_K),
@@ -27,11 +33,13 @@ static QKeySequence __default_keys[] = {
     QKeySequence(Qt::Key_Space),
     QKeySequence(Qt::Key_Return),
     QKeySequence(Qt::Key_B),
+    QKeySequence(Qt::Key_L),
 
 };
 
 QKeySequence* default_keys = __default_keys;
 
 const char* vk_names[] = {
-    "", "A", "B", "TURBO_A", "TURBO_B", "UP", "DOWN", "LEFT", "RIGHT", "SELECT", "START", "REWIND",
+    "",     "A",     "B",      "TURBO_A", "TURBO_B", "UP",          "DOWN",
+    "LEFT", "RIGHT", "SELECT", "START",   "REWIND",  "SUPER_SKILL",
 };

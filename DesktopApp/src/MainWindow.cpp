@@ -45,6 +45,7 @@ void MainWindow::init_menu_bar() {
     QObject::connect(controls_setting, &QAction::triggered, [this]() {
         ControlsSettingDialog dialog(this);
         dialog.exec();
+        game_view_->refresh_key_mappings();
     });
 
     QMenu* help_menu = menu_bar->addMenu("Help");

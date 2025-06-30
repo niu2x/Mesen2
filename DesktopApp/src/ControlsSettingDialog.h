@@ -1,7 +1,9 @@
 #pragma once
 
+#include "VirtualKey.h"
 #include <QDialog>
 #include <QKeySequence>
+#include <QTabWidget>
 #include <QTableWidget>
 
 class ControlsSettingDialog : public QDialog {
@@ -11,9 +13,11 @@ public:
 
 private:
     void apply();
-    void add_shortcut_items(QTableWidget* table, int vk_array[], int count);
+    void add_shortcut_items(QTableWidget* table, const int vk_array[], int count);
 
-    QTableWidget* nes_table_;
+    QTableWidget* tables_[2];
+
+    QTableWidget* create_table(const VirtualKeyGroup& vk_group, QTabWidget*);
 
 protected:
     bool eventFilter(QObject* obj, QEvent* event) override;

@@ -4,8 +4,37 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QSettings>
+#include <set>
 
 static std::map<int, QKeySequence> user_key_mapping;
+
+using SuperSkillConfig = std::vector<std::set<int>>;
+static SuperSkillConfig super_skill_config = { {
+    { APP_VK_A },
+    { APP_VK_A },
+    { APP_VK_DOWN },
+    { APP_VK_DOWN },
+
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B, APP_VK_DOWN },
+    { APP_VK_B },
+} };
 
 void GameView::refresh_key_mappings() {
     user_key_mapping.clear();
@@ -24,7 +53,9 @@ void GameView::refresh_key_mappings() {
 GameView::GameView(QWidget* parent)
     : QOpenGLWidget(parent)
     , canvas_width_(256)
-    , canvas_height_(240) {
+    , canvas_height_(240)
+    , using_super_skill_(false)
+    , super_skill_frame_index_(0) {
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GameView::update_frame);
     timer->start(16); // ~60 FPS
@@ -38,6 +69,16 @@ void GameView::update_frame() {
         return;
 
     update();
+
+    if (using_super_skill_) {
+        mesen_reset_key_state();
+        for (auto& item : super_skill_config[super_skill_frame_index_++]) {
+            mesen_set_key_state(item, true);
+        }
+        if (super_skill_frame_index_ == super_skill_config.size()) {
+            super_skill_frame_index_ = 0;
+        }
+    }
 }
 
 void GameView::set_frame_image(uint32_t* buffer, uint32_t width, uint32_t height) {
@@ -115,6 +156,11 @@ void GameView::keyPressEvent(QKeyEvent* event) {
             int vk = item.first;
             if (seq == item.second) {
                 mesen_set_key_state(vk, true);
+                if (vk == APP_VK_SUPER_SKILL) {
+                    mesen_reset_key_state();
+                    using_super_skill_ = true;
+                    super_skill_frame_index_ = 0;
+                }
             }
         }
         event->accept();
@@ -127,6 +173,10 @@ void GameView::keyReleaseEvent(QKeyEvent* event) {
             int vk = item.first;
             if (event->key() == (item.second[0] & ~Qt::KeyboardModifierMask)) {
                 mesen_set_key_state(vk, false);
+                if (vk == APP_VK_SUPER_SKILL) {
+                    using_super_skill_ = false;
+                    mesen_reset_key_state();
+                }
             }
         }
         event->accept();

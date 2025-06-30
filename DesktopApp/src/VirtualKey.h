@@ -18,6 +18,7 @@ enum {
     APP_VK_SELECT,
     APP_VK_START,
     APP_VK_REWIND,
+    APP_VK_SUPER_SKILL,
     APP_VK_END,
 };
 
@@ -29,4 +30,5 @@ struct VirtualKeyGroup {
 };
 
 extern VirtualKeyGroup nes_key_group;
+extern VirtualKeyGroup misc_key_group;
 extern QKeySequence* default_keys;
