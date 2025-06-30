@@ -35,9 +35,6 @@ private:
 
     QString get_app_data_dir();
 
-    void keyPressEvent(QKeyEvent* event) override;
-    void keyReleaseEvent(QKeyEvent* event) override;
-
     void build_recent_games_menu();
 
     void init_tools_bar();

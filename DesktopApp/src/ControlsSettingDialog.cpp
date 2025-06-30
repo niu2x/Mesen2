@@ -3,6 +3,7 @@
 #include <QDialogButtonBox>
 #include <QFrame>
 #include <QHeaderView>
+#include <QKeyEvent>
 #include <QLabel>
 #include <QPushButton>
 #include <QSettings>
@@ -28,22 +29,26 @@ ControlsSettingDialog::ControlsSettingDialog(QWidget* parent)
                      this,
                      &ControlsSettingDialog::apply);
 
-    auto table = new QTableWidget(this);
-    tabs->addTab(table, "Nes");
+    nes_table_ = new QTableWidget(this);
+    tabs->addTab(nes_table_, "Nes");
 
-    table->setColumnCount(3);
-    table->setHorizontalHeaderLabels(
+    nes_table_->setColumnCount(3);
+    nes_table_->setHorizontalHeaderLabels(
         { tr("Action"), tr("Current Shortcut"), tr("Default Shortcut") });
 
-    table->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
-    table->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
-    table->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
+    nes_table_->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    nes_table_->horizontalHeader()->setSectionResizeMode(1, QHeaderView::ResizeToContents);
+    nes_table_->horizontalHeader()->setSectionResizeMode(2, QHeaderView::ResizeToContents);
 
-    table->verticalHeader()->setVisible(false);
-    table->setSelectionBehavior(QAbstractItemView::SelectRows);
-    table->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    nes_table_->verticalHeader()->setVisible(false);
+    nes_table_->setSelectionBehavior(QAbstractItemView::SelectRows);
+    nes_table_->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
-    add_shortcut_items(table, nes_key_group.keys.data(), nes_key_group.keys.size());
+    nes_table_->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    nes_table_->installEventFilter(this);
+
+    add_shortcut_items(nes_table_, nes_key_group.keys.data(), nes_key_group.keys.size());
 
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     adjustSize();
@@ -59,7 +64,11 @@ void ControlsSettingDialog::add_shortcut_items(QTableWidget* table, int vk_array
 
     for (int i = 0; i < count; i++) {
         int vk = vk_array[i];
-        table->setItem(i, 0, new QTableWidgetItem(vk_names[vk]));
+
+        auto vk_name_item = new QTableWidgetItem(vk_names[vk]);
+        vk_name_item->setData(Qt::UserRole, vk);
+
+        table->setItem(i, 0, vk_name_item);
         if (settings.contains(vk_names[vk])) {
             table->setItem(i, 1, new QTableWidgetItem(settings.value(vk_names[vk]).toString()));
         }
@@ -69,4 +78,48 @@ void ControlsSettingDialog::add_shortcut_items(QTableWidget* table, int vk_array
     settings.endGroup();
 }
 
-void ControlsSettingDialog::apply() { accept(); }
+void ControlsSettingDialog::apply() {
+    save_settings(nes_table_);
+    accept();
+}
+
+void ControlsSettingDialog::save_settings(QTableWidget* table) {
+    QSettings settings;
+    settings.beginGroup("Key Bindings");
+
+    auto count = table->rowCount();
+    for (int i = 0; i < count; i++) {
+        int vk = nes_table_->item(i, 0)->data(Qt::UserRole).toInt();
+        auto key_item = nes_table_->item(i, 1);
+        if (key_item) {
+            auto key_text = key_item->text();
+
+            if (key_text != "") {
+                settings.setValue(vk_names[vk], QKeySequence(key_text).toString());
+
+            } else {
+                settings.remove(vk_names[vk]);
+            }
+        }
+    }
+    settings.endGroup();
+}
+
+bool ControlsSettingDialog::eventFilter(QObject* obj, QEvent* event) {
+    if (event->type() == QEvent::KeyPress) {
+        QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
+        if (!key_event->isAutoRepeat()) {
+
+            if (obj == nes_table_) {
+                int current_row = nes_table_->currentRow();
+                int vk = nes_table_->item(current_row, 0)->data(Qt::UserRole).toInt();
+
+                QKeySequence key_seq(key_event->modifiers() | key_event->key());
+                nes_table_->setItem(current_row, 1, new QTableWidgetItem(key_seq.toString()));
+
+                return true;
+            }
+        }
+    }
+    return QDialog::eventFilter(obj, event);
+}

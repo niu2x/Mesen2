@@ -1,5 +1,25 @@
 #include "GameView.h"
+#include "VirtualKey.h"
+#include <Mesen/Mesen.h>
 #include <QApplication>
+#include <QKeyEvent>
+#include <QSettings>
+
+static std::map<int, QKeySequence> user_key_mapping;
+
+void GameView::refresh_key_mappings() {
+    user_key_mapping.clear();
+
+    QSettings settings;
+
+    settings.beginGroup("Key Bindings");
+    for (int vk = APP_VK_BEGIN; vk < APP_VK_END; vk++) {
+        auto key_seq = QKeySequence(settings.value(vk_names[vk], default_keys[vk]).toString());
+        user_key_mapping[vk] = key_seq;
+    }
+
+    settings.endGroup();
+}
 
 GameView::GameView(QWidget* parent)
     : QOpenGLWidget(parent)
@@ -8,6 +28,8 @@ GameView::GameView(QWidget* parent)
     QTimer* timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &GameView::update_frame);
     timer->start(16); // ~60 FPS
+
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 void GameView::update_frame() {
@@ -83,5 +105,30 @@ void GameView::paintGL() {
 
         // 恢复矩阵
         glPopMatrix();
+    }
+}
+
+void GameView::keyPressEvent(QKeyEvent* event) {
+    if (!event->isAutoRepeat()) {
+        QKeySequence seq(event->modifiers() | event->key());
+        for (auto& item : user_key_mapping) {
+            int vk = item.first;
+            if (seq == item.second) {
+                mesen_set_key_state(vk, true);
+            }
+        }
+        event->accept();
+    }
+}
+
+void GameView::keyReleaseEvent(QKeyEvent* event) {
+    if (!event->isAutoRepeat()) {
+        for (auto& item : user_key_mapping) {
+            int vk = item.first;
+            if (event->key() == (item.second[0] & ~Qt::KeyboardModifierMask)) {
+                mesen_set_key_state(vk, false);
+            }
+        }
+        event->accept();
     }
 }

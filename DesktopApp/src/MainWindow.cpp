@@ -24,8 +24,6 @@
 #include "ControlsSettingDialog.h"
 #include "VirtualKey.h"
 
-static std::map<int, QKeySequence> user_key_mapping;
-
 MainWindow* MainWindow::singleton_ = nullptr;
 
 void MainWindow::init_menu_bar() {
@@ -93,7 +91,7 @@ MainWindow::MainWindow()
 
     init_mesen();
 
-    refresh_key_mappings();
+    game_view_->refresh_key_mappings();
 }
 
 void MainWindow::init_tools_bar() {
@@ -210,20 +208,6 @@ void MainWindow::build_recent_games_menu() {
     }
 }
 
-void MainWindow::refresh_key_mappings() {
-    user_key_mapping.clear();
-
-    QSettings settings;
-
-    settings.beginGroup("Key Bindings");
-    for (int vk = APP_VK_BEGIN; vk < APP_VK_END; vk++) {
-        auto key_seq = QKeySequence(settings.value(vk_names[vk], default_keys[vk]).toString());
-        user_key_mapping[vk] = key_seq;
-    }
-
-    settings.endGroup();
-}
-
 void MainWindow::init_mesen() {
     mesen_init();
 
@@ -298,30 +282,5 @@ void MainWindow::mesen_notification_callback(MesenNotificationType noti_type, vo
 
     } else if (noti_type == MESEN_NOTIFICATION_TYPE_STOP_AUDIO_DEVICE) {
         singleton_->stop_audio_device();
-    }
-}
-
-void MainWindow::keyPressEvent(QKeyEvent* event) {
-    if (!event->isAutoRepeat()) {
-        QKeySequence seq(event->modifiers() | event->key());
-        for (auto& item : user_key_mapping) {
-            int vk = item.first;
-            if (seq == item.second) {
-                mesen_set_key_state(vk, true);
-            }
-        }
-        event->accept();
-    }
-}
-
-void MainWindow::keyReleaseEvent(QKeyEvent* event) {
-    if (!event->isAutoRepeat()) {
-        for (auto& item : user_key_mapping) {
-            int vk = item.first;
-            if (event->key() == (item.second[0] & ~Qt::KeyboardModifierMask)) {
-                mesen_set_key_state(vk, false);
-            }
-        }
-        event->accept();
     }
 }
