@@ -24,7 +24,7 @@
 #include "ControlsSettingDialog.h"
 #include "VirtualKey.h"
 
-static std::map<uint32_t, int> user_key_mapping;
+static std::map<int, QKeySequence> user_key_mapping;
 
 MainWindow* MainWindow::singleton_ = nullptr;
 
@@ -54,7 +54,7 @@ void MainWindow::init_menu_bar() {
     help_menu->addAction(about_action);
     QObject::connect(about_action, &QAction::triggered, []() {
         QMessageBox messageBox;
-        messageBox.setText("这软件是完全免费~");
+        messageBox.setText("这软件依赖了Mesen2、Qt5。软件完全开源。");
         messageBox.exec();
     });
 }
@@ -217,10 +217,8 @@ void MainWindow::refresh_key_mappings() {
 
     settings.beginGroup("Key Bindings");
     for (int vk = APP_VK_BEGIN; vk < APP_VK_END; vk++) {
-
         auto key_seq = QKeySequence(settings.value(vk_names[vk], default_keys[vk]).toString());
-        auto key = static_cast<Qt::Key>(key_seq[0]);
-        user_key_mapping[key] = vk;
+        user_key_mapping[vk] = key_seq;
     }
 
     settings.endGroup();
@@ -305,20 +303,25 @@ void MainWindow::mesen_notification_callback(MesenNotificationType noti_type, vo
 
 void MainWindow::keyPressEvent(QKeyEvent* event) {
     if (!event->isAutoRepeat()) {
-        auto it = user_key_mapping.find(event->key());
-        if (it != user_key_mapping.end()) {
-            mesen_set_key_state(it->second, true);
-            event->accept(); // 表示事件已处理
+        QKeySequence seq(event->modifiers() | event->key());
+        for (auto& item : user_key_mapping) {
+            int vk = item.first;
+            if (seq == item.second) {
+                mesen_set_key_state(vk, true);
+            }
         }
+        event->accept();
     }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent* event) {
     if (!event->isAutoRepeat()) {
-        auto it = user_key_mapping.find(event->key());
-        if (it != user_key_mapping.end()) {
-            mesen_set_key_state(it->second, false);
-            event->accept(); // 表示事件已处理
+        for (auto& item : user_key_mapping) {
+            int vk = item.first;
+            if (event->key() == (item.second[0] & ~Qt::KeyboardModifierMask)) {
+                mesen_set_key_state(vk, false);
+            }
         }
+        event->accept();
     }
 }
