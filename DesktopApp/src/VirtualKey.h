@@ -6,8 +6,8 @@
 #include <vector>
 
 enum {
-    APP_VK_BEGIN = 0,
-    APP_VK_A = 0,
+    APP_VK_BEGIN = 1,
+    APP_VK_A = 1,
     APP_VK_B,
     APP_VK_TURBO_A,
     APP_VK_TURBO_B,
