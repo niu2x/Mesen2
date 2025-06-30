@@ -86,6 +86,8 @@ MainWindow::MainWindow()
 
     singleton_ = this;
 
+    setWindowIcon(QIcon(":/icon/window-icon.png"));
+
     init_menu_bar();
     init_tools_bar();
     init_ui();

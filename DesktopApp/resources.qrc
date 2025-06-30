@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>icon/reset.png</file>
+        <file>icon/window-icon.png</file>
     </qresource>
 </RCC>
