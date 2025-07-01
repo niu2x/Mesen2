@@ -180,7 +180,7 @@ void MainWindow::load_ROM() {
     QString filename = QFileDialog::getOpenFileName(this, // 父窗口
                                                     tr("Select A ROM File"), // 对话框标题
                                                     "", // 初始目录
-                                                    tr("ROM Files (*.nes);;") // 文件过滤器
+                                                    tr("ROM Files (*.nes *.sfc);;") // 文件过滤器
     );
     if (!filename.isEmpty()) {
         bool succ = mesen_load_ROM(filename.toUtf8().constData(), nullptr);
@@ -244,7 +244,27 @@ void MainWindow::init_mesen() {
             .type = MESEN_CONTROLLER_TYPE_NES_CONTROLLER,
         },
     };
-    mesen_set_NES_config(&nes_config);
+    mesen_set_nes_config(&nes_config);
+
+    MesenSnesConfig snes_config = {
+        .port_1 = {
+            .key_mapping = {
+                .A = APP_VK_A,
+                .B = APP_VK_B,
+                .up = APP_VK_UP,
+                .down = APP_VK_DOWN,
+                .left = APP_VK_LEFT,
+                .right = APP_VK_RIGHT,
+                .start = APP_VK_START,
+                .select = APP_VK_SELECT,
+                .turbo_A = APP_VK_TURBO_A,
+                .turbo_B = APP_VK_TURBO_B,
+                .turbo_speed = 3,
+            },
+            .type = MESEN_CONTROLLER_TYPE_SNES_CONTROLLER,
+        },
+    };
+    mesen_set_snes_config(&snes_config);
 
     MesenShortcutKeyInfo shortcut_infos[1];
 

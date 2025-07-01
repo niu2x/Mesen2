@@ -11,6 +11,7 @@ extern "C" {
 
 // Should keep consistent with ControllerType (Core/Shared/SettingTypes.h)
 enum MesenControllerType {
+    MESEN_CONTROLLER_TYPE_SNES_CONTROLLER = 1,
     MESEN_CONTROLLER_TYPE_NES_CONTROLLER = 6,
 };
 
@@ -102,6 +103,11 @@ typedef struct {
     MesenControllerConfig port_2;
 } MesenNesConfig;
 
+typedef struct {
+    MesenControllerConfig port_1;
+    MesenControllerConfig port_2;
+} MesenSnesConfig;
+
 typedef void (*MesenNotificationCallback)(MesenNotificationType event_type, void* param);
 
 typedef struct {
@@ -167,7 +173,8 @@ MESEN_API void mesen_initialize_emu(const char* home_folder,
 MESEN_API void mesen_release();
 
 // important: set NES config
-MESEN_API void mesen_set_NES_config(const MesenNesConfig* NES_config);
+MESEN_API void mesen_set_nes_config(const MesenNesConfig* NES_config);
+MESEN_API void mesen_set_snes_config(const MesenSnesConfig* NES_config);
 
 MESEN_API bool mesen_load_ROM(const char* file, const char* patch_file);
 MESEN_API void mesen_load_recent_game(const char* file, bool reset_game);

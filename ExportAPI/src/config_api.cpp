@@ -32,8 +32,7 @@ ControllerConfig from(const MesenControllerConfig& src)
     return config;
 }
 
-void mesen_set_NES_config(const MesenNesConfig* NES_config)
-{
+void mesen_set_nes_config(const MesenNesConfig* NES_config) {
     auto config = GetNesConfig();
     memcpy(config.UserPalette, NES_config->user_palette, sizeof(MesenPalette));
 
@@ -44,6 +43,18 @@ void mesen_set_NES_config(const MesenNesConfig* NES_config)
         config.ChannelVolumes[i] = 100;
 
     SetNesConfig(config);
+}
+
+void mesen_set_snes_config(const MesenSnesConfig* config) {
+    auto curr_config = _emu->GetSettings()->GetSnesConfig();
+
+    curr_config.Port1 = from(config->port_1);
+    curr_config.Port2 = from(config->port_2);
+
+    for (int i = 0; i < 8; i++)
+        curr_config.ChannelVolumes[i] = 100;
+
+    SetSnesConfig(curr_config);
 }
 
 void mesen_set_video_config(const MesenVideoConfig* video_config)
