@@ -13,6 +13,8 @@ protected:
 		SelectChrPage(0, 0);
 	}
 
+	void InitMapper(RomData& romData) override;
+
 	void Reset(bool softReset) override
 	{
 		WriteRegister(0x8000, 0);
@@ -25,9 +27,17 @@ protected:
 		uint8_t subBank = value >> 7;
 		uint8_t bank = (value & 0x7F) << 1;
 		uint8_t mode = addr & 0x03;
+
 		
-		SetPpuMemoryMapping(0, 0x1FFF, 0, ChrMemoryType::Default, (mode == 0 || mode == 3) ? MemoryAccessType::Read : MemoryAccessType::ReadWrite);
-		
+		MemoryAccessType access_type = MemoryAccessType::ReadWrite;
+		if (enable_chr_ram_write_protection_) {
+			if(mode == 0 || mode == 3){
+				access_type = MemoryAccessType::Read;
+			}
+		}
+
+		SetPpuMemoryMapping(0, 0x1FFF, 0, ChrMemoryType::Default, access_type);
+
 		switch(mode) {
 			case 0:
 				SelectPrgPage(0, bank  ^ subBank);
@@ -55,4 +65,7 @@ protected:
 				break;
 		}
 	}
+
+private:
+	bool enable_chr_ram_write_protection_ = true;
 };
