@@ -12,4 +12,4 @@ if '__main__' == __name__:
         with open(infile, 'rt', encoding='utf-8') as f:
             for line in f.readlines():
                 line = line.strip()
-                out.write(f'"{line}"\n')
+                out.write(f'"{line}\\n"\n')
