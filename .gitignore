@@ -13,6 +13,8 @@
 [Rr]elease/
 x64/
 build/
+build-Debug/
+build-Release/
 [Bb]in/
 [Oo]bj/
 [Oo]bj.x86/

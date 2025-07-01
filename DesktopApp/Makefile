@@ -9,14 +9,16 @@ JOBS := $(shell expr $(CORES) - 1)
 
 triple := x86_64-PC-Linux
 
-build-linux:
-	cmake -S .. -B ../build/$(triple)/MesenRT \
-		-DCMAKE_BUILD_TYPE=Release
-	cmake --build ../build/$(triple)/MesenRT -j $(JOBS)
-	cmake --install ../build/$(triple)/MesenRT --prefix ../dist/$(triple)
+build_type := Release
 
-	cmake -S . -DCMAKE_BUILD_TYPE=Release \
-		-B ../build/$(triple)/DesktopApp \
+build-linux:
+	cmake -S .. -B ../build-$(build_type)/$(triple)/MesenRT \
+		-DCMAKE_BUILD_TYPE=$(build_type)
+	cmake --build ../build-$(build_type)/$(triple)/MesenRT -j $(JOBS)
+	cmake --install ../build-$(build_type)/$(triple)/MesenRT --prefix ../dist/$(triple)
+
+	cmake -S . -DCMAKE_BUILD_TYPE=$(build_type) \
+		-B ../build-$(build_type)/$(triple)/DesktopApp \
 		-DDIST=$(CUR_DIR)/../dist/$(triple)
-	cmake --build ../build/$(triple)/DesktopApp -j $(JOBS)
-	cmake --install ../build/$(triple)/DesktopApp --prefix ../dist/$(triple)
+	cmake --build ../build-$(build_type)/$(triple)/DesktopApp -j $(JOBS)
+	cmake --install ../build-$(build_type)/$(triple)/DesktopApp --prefix ../dist/$(triple)
