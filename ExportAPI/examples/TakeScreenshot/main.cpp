@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
         .user_palette = {},
     };
     memcpy(NES_config.user_palette, mesen_default_palette, sizeof(MesenPalette));
-    mesen_set_NES_config(&NES_config);
+    mesen_set_nes_config(&NES_config);
 
     MesenVideoConfig video_config {
         .video_filter = MESEN_VIDEO_FILTER_TYPE_HQ_4X,

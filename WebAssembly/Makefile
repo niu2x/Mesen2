@@ -1,12 +1,15 @@
 directory := wasm32-unknown-unknown
 toolchain := /opt/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 
+CORES := $(shell nproc)
+JOBS := $(shell expr $(CORES) - 1)
+
 build-WebAssembly:
 	cmake -S .. -B ../build/$(directory) \
 		-DCMAKE_BUILD_TYPE=Release \
 		-GNinja \
 		-DCMAKE_TOOLCHAIN_FILE=$(toolchain)
-	cmake --build ../build/$(directory) -j 2
+	cmake --build ../build/$(directory) -j $(JOBS)
 	cmake --install ../build/$(directory) --prefix ../dist/$(directory)
 
 	cmake -S . -B ../build/WebAssembly \
@@ -14,7 +17,7 @@ build-WebAssembly:
 		-GNinja \
 		-DCMAKE_TOOLCHAIN_FILE=$(toolchain) \
 		-DDIST=$(PWD)/../dist/$(directory)
-	cmake --build ../build/WebAssembly
+	cmake --build ../build/WebAssembly -j $(JOBS)
 
 
 	cp ../build/WebAssembly/WebNative.js src/
