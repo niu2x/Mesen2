@@ -273,8 +273,7 @@ int main()
     return 0;
 }
 
-static void notify(int noti, void* param)
-{
+static void notify(MesenNotificationType noti, void* param) {
     if (noti == MESEN_NOTIFICATION_TYPE_REFRESH_SOFTWARE_RENDERER) {
         auto* renderer_frame = (MesenSoftwareRendererFrame*)param;
 
@@ -340,8 +339,15 @@ extern "C" void load_NES_file(const char* ROM_path)
         mesen_set_preferences(&preferences);
     });
 
+    MesenPalette palette;
+    memcpy(palette, mesen_default_palette, sizeof(MesenPalette));
+
+    for (int i = 0; i < 512; i++) {
+        palette[i] = RGBA_TO_ABGR(palette[i]);
+    }
+
     MesenNesConfig NES_config = {
-        .user_palette = {},
+        .user_palette = &palette,
         .port_1 = {
             .key_mapping = {
                 .A = 'K',
@@ -364,11 +370,7 @@ extern "C" void load_NES_file(const char* ROM_path)
         },
     };
 
-    for (int i = 0; i < 512; i++) {
-        NES_config.user_palette[i] = RGBA_TO_ABGR(mesen_default_palette[i]);
-    }
-
-    mesen_set_NES_config(&NES_config);
+    mesen_set_nes_config(&NES_config);
 
     bool succ = mesen_load_ROM(ROM_path, NULL);
     printf("load ROM succ?: %d\n", succ);
@@ -378,7 +380,7 @@ extern "C" void load_NES_file(const char* ROM_path)
 EMSCRIPTEN_KEEPALIVE 
 extern "C" void reset_emulator() {
     MesenExecuteShortcutParams exec_params {
-        .shortcut = MESEN_SHORTCUT_EXEC_RESET,
+        .action = MESEN_SHORTCUT_TYPE_EXEC_RESET,
     };
     mesen_execute_shortcut(&exec_params);
 }
