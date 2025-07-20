@@ -121,7 +121,7 @@ LoadRomResult WsConsole::LoadRom(VirtualFile& romFile)
 
 	_controlManager.reset(new WsControlManager(_emu, this));
 	_memoryManager.reset(new WsMemoryManager());
-	_cpu.reset(new WsCpu(_emu, _memoryManager.get()));
+	_cpu.reset(new WsCpu(_emu, this, _memoryManager.get()));
 	_timer.reset(new WsTimer());
 	_serial.reset(new WsSerial(this));
 	_dmaController.reset(new WsDmaController());
@@ -151,6 +151,12 @@ void WsConsole::RunFrame()
 	}
 	
 	_apu->PlayQueuedAudio();
+
+	//Make sure to process writes to EEPROM once a frame at least (so that the update is visible in the memory viewer)
+	_internalEeprom->Run();
+	if(_cartEeprom) {
+		_cartEeprom->Run();
+	}
 
 	_verticalMode |= _ppu->GetState().Icons.Vertical;
 	if(_ppu->GetState().Icons.Horizontal) {

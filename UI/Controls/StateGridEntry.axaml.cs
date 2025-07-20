@@ -9,6 +9,7 @@ using Mesen.Localization;
 using Mesen.Utilities;
 using Mesen.ViewModels;
 using System;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
@@ -152,7 +153,7 @@ namespace Mesen.Controls
 									string? line = null;
 									while((line = reader.ReadLine()) != null) {
 										if(line.StartsWith("aspectratio=")) {
-											double.TryParse(line.Split('=')[1], out aspectRatio);
+											double.TryParse(line.Split('=')[1], NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out aspectRatio);
 											break;
 										}
 									}
